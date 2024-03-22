@@ -18,7 +18,7 @@ export default async function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <section>
-      <div className="border-b">
+      <div className="sm:border-b">
         <MobileUserSidebar session={session} />
         <div className="container gap-4 sm:grid sm:grid-cols-[200px_minmax(0,1fr)]">
           <DesktopUserSidebar session={session} />

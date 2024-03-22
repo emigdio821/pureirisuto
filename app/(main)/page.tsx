@@ -1,3 +1,5 @@
+import { MusicProviderCards } from '@/components/music-provider-cards'
+
 export default async function MainPage() {
   // const session = await getServerSession(authOptions)
 
@@ -7,10 +9,12 @@ export default async function MainPage() {
 
   return (
     <section className="py-4">
-      <div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, exercitationem?
-        Laboriosam id porro quod molestias, ut pariatur accusamus. Magnam ullam eos accusamus
-        architecto! Magni quas qui nesciunt iste accusamus rerum?
+      <h2 className="text-xl font-semibold">Connect music providers</h2>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Connect your music providers, and start transfering, creating and updating your playlists.
+      </p>
+      <div className="flex flex-wrap gap-4">
+        <MusicProviderCards />
       </div>
     </section>
   )

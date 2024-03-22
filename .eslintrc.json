@@ -2,6 +2,7 @@
   "extends": [
     "standard-with-typescript",
     "plugin:jsx-a11y/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
     "prettier",
     "next/core-web-vitals"
   ],

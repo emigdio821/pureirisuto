@@ -14,7 +14,7 @@ export function SidebarContent({ closeSheet, session }: SidebarContentProps) {
 
   return (
     <>
-      <div className="mb-6 flex items-center gap-2">
+      <div className="mb-4 flex items-center gap-2">
         <Avatar className="h-8 w-8">
           <AvatarImage alt="user avatar" src={user?.image ?? ''} />
           <AvatarFallback asChild>

@@ -13,7 +13,7 @@ export function MobileUserSidebar({ session }: { session: Session }) {
   const [sheetOpen, setSheetOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 block w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:hidden">
+    <header className="sticky top-0 z-50 block w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:hidden">
       <div className="container flex h-14 items-center">
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger>

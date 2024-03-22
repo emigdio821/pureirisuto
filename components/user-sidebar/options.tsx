@@ -8,7 +8,7 @@ import { signOut } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
-const sidebarOpts = [
+const SIDEBAR_OPTS = [
   {
     title: 'Home',
     href: '/',
@@ -32,7 +32,7 @@ export function SidebarOpts({ closeSheet }: { closeSheet?: () => void }) {
   return (
     <div className="flex h-full flex-col justify-between">
       <ul className="space-y-1">
-        {sidebarOpts.map((option) => {
+        {SIDEBAR_OPTS.map((option) => {
           const isActive = pathname === option.href
 
           return (
