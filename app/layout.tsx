@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from 'next'
 import { Figtree } from 'next/font/google'
 
-import './globals.css'
+import '@/styles/globals.css'
 
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
+import { Toaster } from '@/components/ui/sonner'
 import Footer from '@/components/footer'
 import { Providers } from '@/components/providers'
-import { UserSidebar } from '@/components/user-sidebar'
 
 interface RootLayoutProps {
   children: React.ReactNode
@@ -37,7 +37,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head />
       <body
         className={cn(
           'relative flex min-h-screen flex-col bg-background antialiased ',
@@ -45,15 +46,9 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
         )}
       >
         <Providers>
-          <main>
-            <div className="border-b">
-              <div className="container gap-4 sm:grid sm:grid-cols-[220px_minmax(0,1fr)]">
-                <UserSidebar />
-                {children}
-              </div>
-            </div>
-          </main>
+          <main>{children}</main>
           <Footer />
+          <Toaster />
         </Providers>
       </body>
     </html>
