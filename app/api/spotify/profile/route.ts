@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import type { SpotifyMeResponse } from '@/types'
 import axios from 'axios'
+
+import type { SpotifyMeResponse } from '@/types/spotify-api'
 
 import { getAccessToken } from '../access-token/route'
 

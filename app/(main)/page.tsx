@@ -13,7 +13,7 @@ export default async function MainPage() {
       <p className="mb-4 text-sm text-muted-foreground">
         Connect your music providers, and start transfering, creating and updating your playlists.
       </p>
-      <div className="flex flex-wrap gap-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MusicProviderCards />
       </div>
     </section>

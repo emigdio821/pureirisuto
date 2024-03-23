@@ -41,7 +41,7 @@ export function SidebarOpts({ closeSheet }: { closeSheet?: () => void }) {
                 asChild
                 variant="ghost"
                 className={cn('w-full justify-start', {
-                  'bg-accent text-accent-foreground': isActive,
+                  'pointer-events-none bg-primary text-primary-foreground': isActive,
                 })}
               >
                 <Link

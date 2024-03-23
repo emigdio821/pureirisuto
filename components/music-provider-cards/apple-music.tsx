@@ -6,7 +6,7 @@ import { AppleMusicIcon } from '@/components/icons'
 
 export function AppleMusicProviderCard() {
   return (
-    <Card className="w-80">
+    <Card>
       <CardHeader>
         <span className="flex items-center">
           <AppleMusicIcon className="mr-2 h-5 w-5" />

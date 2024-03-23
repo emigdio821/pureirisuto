@@ -6,10 +6,12 @@ import { toast } from 'sonner'
 
 import { useSpotifyProfile } from '@/hooks/use-spotify-profile'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner, SpotifyIcon } from '@/components/icons'
+import { ImgPlaceholder } from '@/components/img-placeholder'
 
 export function SpotifyProviderCard() {
   const [loading, setLoading] = useState(false)
@@ -25,7 +27,7 @@ export function SpotifyProviderCard() {
 
   if (isLoading) {
     return (
-      <Card className="w-80">
+      <Card>
         <CardHeader>
           <span className="flex items-center">
             <Skeleton className="mr-2 h-5 w-5 rounded-full" />
@@ -44,7 +46,7 @@ export function SpotifyProviderCard() {
 
   if (error) {
     return (
-      <Card className="w-80">
+      <Card>
         <CardContent className="flex h-full flex-col items-center justify-between gap-2 p-4">
           <div className="flex flex-col items-center justify-center gap-2">
             <CircleAlertIcon className="h-5 w-5" />
@@ -65,7 +67,7 @@ export function SpotifyProviderCard() {
 
   if (!data) {
     return (
-      <Card className="w-80">
+      <Card>
         <CardHeader>
           <span className="flex items-center">
             <SpotifyIcon className="mr-2 h-5 w-5" />
@@ -83,37 +85,37 @@ export function SpotifyProviderCard() {
   }
 
   return (
-    <Card className="w-80">
+    <Card>
       <CardHeader>
         <span className="flex items-center">
           <SpotifyIcon className="mr-2 h-5 w-5" />
           <CardTitle>Spotify</CardTitle>
         </span>
-        <CardDescription>Connected</CardDescription>
+        <CardDescription>
+          <Badge variant="outline">Connected</Badge>
+        </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage alt="user avatar" src={data.images[0].url ?? ''} />
-            <AvatarFallback asChild>
-              <div className="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500" />
-            </AvatarFallback>
-          </Avatar>
-          <span className="flex flex-col items-start gap-1">
-            <span className="text-sm font-semibold">{data.display_name}</span>
-            <Button
-              variant="link"
-              disabled={loading}
-              className="text-xs"
-              onClick={() => {
-                void handleDisconnect()
-              }}
-            >
-              Disconnect
-              {loading && <Spinner className="ml-2" />}
-            </Button>
-          </span>
-        </div>
+      <CardContent className="flex items-center gap-2">
+        <Avatar className="h-8 w-8">
+          <AvatarImage alt="user avatar" src={data.images[0].url ?? ''} />
+          <AvatarFallback asChild>
+            <ImgPlaceholder />
+          </AvatarFallback>
+        </Avatar>
+        <span className="flex flex-col items-start">
+          <span className="text-sm font-semibold">{data.display_name}</span>
+          <Button
+            variant="link"
+            disabled={loading}
+            className="text-xs"
+            onClick={() => {
+              void handleDisconnect()
+            }}
+          >
+            Disconnect
+            {loading && <Spinner className="ml-2" />}
+          </Button>
+        </span>
       </CardContent>
     </Card>
   )

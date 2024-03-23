@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import type { SpotifyAccessTokenResponse } from '@/types'
 import axios, { isAxiosError } from 'axios'
 
+import type { SpotifyAccessTokenResponse } from '@/types/spotify-api'
 import { envServerSchema } from '@/lib/schemas/server-env'
 
 export const revalidate = 0

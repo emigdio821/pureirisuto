@@ -1,6 +1,7 @@
-import type { SpotifyMeResponse } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import axios, { isAxiosError } from 'axios'
+
+import type { SpotifyMeResponse } from '@/types/spotify-api'
 
 const EP = `${process.env.NEXT_PUBLIC_API_URL}/spotify/profile`
 
@@ -15,7 +16,7 @@ export function useSpotifyProfile() {
       if (isAxiosError(err)) {
         errorMsg = err.message
       }
-      console.log(errorMsg)
+      console.log('[SPOTIFY_PROFILE_ERR]', errorMsg)
       return null
     }
   }

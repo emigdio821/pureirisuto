@@ -6,7 +6,7 @@ import { YTMusicIcon } from '@/components/icons'
 
 export function YTMusicProviderCard() {
   return (
-    <Card className="w-80">
+    <Card>
       <CardHeader>
         <span className="flex items-center">
           <YTMusicIcon className="mr-2 h-5 w-5" />
