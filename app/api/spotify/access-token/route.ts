@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { SpotifyAccessTokenResponse } from '@/types'
-import axios from 'axios'
+import axios, { isAxiosError } from 'axios'
 
 import { envServerSchema } from '@/lib/schemas/server-env'
 
@@ -39,17 +39,17 @@ async function refreshAccessToken() {
     {
       grant_type: 'refresh_token',
       refresh_token: refreshToken?.value,
-      client_id: SPOTIFY_CLIENT_ID,
     },
     {
       headers: {
+        Authorization: `Basic ${basic}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     },
   )
 }
 
-function handleCookies(expiresIn: number, accessToken: string, refreshToken: string) {
+function handleCookies(expiresIn: number, accessToken: string, refreshToken?: string) {
   const now = new Date()
   const expiresInMs = expiresIn * 1000 - 600000
   cookies().set('spotify.access-token', accessToken, {
@@ -57,10 +57,12 @@ function handleCookies(expiresIn: number, accessToken: string, refreshToken: str
     httpOnly: true,
     expires: now.getTime() + expiresInMs,
   })
-  cookies().set('spotify.refresh-token', refreshToken, {
-    path: '/',
-    httpOnly: true,
-  })
+  if (refreshToken) {
+    cookies().set('spotify.refresh-token', refreshToken, {
+      path: '/',
+      httpOnly: true,
+    })
+  }
 }
 
 export async function getAccessToken() {
@@ -77,14 +79,22 @@ export async function getAccessToken() {
     handleCookies(data.expires_in, data.access_token, data.refresh_token)
     return data
   } catch (err) {
-    console.log('[GET_AT_ERR]', err)
+    let errorMsg = 'Access token error'
+    if (isAxiosError(err)) {
+      errorMsg = err.message
+    }
+    console.log('[GET_AT_ERR]', errorMsg)
     console.log('Trying to refresh existing one...')
     try {
       const { data } = await refreshAccessToken()
-      handleCookies(data.expires_in, data.access_token, data.refresh_token)
+      handleCookies(data.expires_in, data.access_token)
       return data
     } catch (err) {
-      console.log('[REFRESH_AT_ERR]', err)
+      let errorMsg = 'Refresh access token error'
+      if (isAxiosError(err)) {
+        errorMsg = err.message
+      }
+      console.log('[REFRESH_AT_ERR]', errorMsg)
       return {
         access_token: null,
         token_type: null,

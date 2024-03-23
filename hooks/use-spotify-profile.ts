@@ -15,7 +15,8 @@ export function useSpotifyProfile() {
       if (isAxiosError(err)) {
         errorMsg = err.message
       }
-      throw new Error(errorMsg)
+      console.log(errorMsg)
+      return null
     }
   }
 

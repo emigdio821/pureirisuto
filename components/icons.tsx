@@ -16,7 +16,7 @@ export function Spinner({ className, barsClassName }: SpinnerProps) {
           <div
             key={`spinner-bar-${n}`}
             className={cn(
-              'animate-spinner absolute -left-[10%] -top-[3.9%] h-[8%] w-[24%] rounded-[6px] bg-foreground',
+              'absolute -left-[10%] -top-[3.9%] h-[8%] w-[24%] animate-spinner rounded-[6px] bg-foreground',
               styles['spinner-bar'],
               barsClassName,
             )}

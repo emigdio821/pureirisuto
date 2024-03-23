@@ -1,15 +1,27 @@
+import { useState } from 'react'
 import Link from 'next/link'
+import axios from 'axios'
 import { CircleAlertIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { useSpotifyProfile } from '@/hooks/use-spotify-profile'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SpotifyIcon } from '@/components/icons'
+import { Spinner, SpotifyIcon } from '@/components/icons'
 
 export function SpotifyProviderCard() {
+  const [loading, setLoading] = useState(false)
   const { data, error, isLoading, refetch } = useSpotifyProfile()
-  console.log(data)
+
+  async function handleDisconnect() {
+    setLoading(true)
+    await axios.post('/api/spotify/disconnect')
+    await refetch()
+    setLoading(false)
+    toast.success('Disconnected from Spotify')
+  }
 
   if (isLoading) {
     return (
@@ -79,12 +91,29 @@ export function SpotifyProviderCard() {
         </span>
         <CardDescription>Connected</CardDescription>
       </CardHeader>
-      <CardContent>
-        <p className="flex h-10 items-center justify-center rounded-lg border px-4 py-2 text-sm">
-          <span>
-            Connected as <span className="font-semibold">{data.display_name}</span>
+      <CardContent className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarImage alt="user avatar" src={data.images[0].url ?? ''} />
+            <AvatarFallback asChild>
+              <div className="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500" />
+            </AvatarFallback>
+          </Avatar>
+          <span className="flex flex-col items-start gap-1">
+            <span className="text-sm font-semibold">{data.display_name}</span>
+            <Button
+              variant="link"
+              disabled={loading}
+              className="text-xs"
+              onClick={() => {
+                void handleDisconnect()
+              }}
+            >
+              Disconnect
+              {loading && <Spinner className="ml-2" />}
+            </Button>
           </span>
-        </p>
+        </div>
       </CardContent>
     </Card>
   )
