@@ -92,4 +92,32 @@ export interface Followers {
 export interface PlaylistTracks {
   href: string
   total: number
+  items?: TrackItem[]
+}
+
+export interface TrackItem {
+  added_at: string
+  is_local: boolean
+  primary_color: string | null
+  track: Track
+}
+
+export interface Track {
+  id: string
+  name: string
+  is_local: boolean
+  duration_ms: number
+  explicit: boolean
+  artists: Artist[]
+  album: Album
+}
+
+export interface Artist {
+  id: string
+  href: string
+  name: string
+}
+
+export interface Album {
+  name: string
 }

@@ -6,7 +6,7 @@ import '@/styles/globals.css'
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
-import Footer from '@/components/footer'
+// import Footer from '@/components/footer'
 import { Providers } from '@/components/providers'
 
 interface RootLayoutProps {
@@ -47,7 +47,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       >
         <Providers>
           <main>{children}</main>
-          <Footer />
+          {/* <Footer /> */}
           <Toaster />
         </Providers>
       </body>

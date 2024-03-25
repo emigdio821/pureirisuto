@@ -91,9 +91,9 @@ export function SpotifyProviderCard() {
           <SpotifyIcon className="mr-2 h-5 w-5" />
           <CardTitle>Spotify</CardTitle>
         </span>
-        <CardDescription>
+        <div>
           <Badge variant="outline">Connected</Badge>
-        </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="flex items-center gap-2">
         <Avatar className="h-8 w-8">

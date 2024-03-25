@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 4%;
 
-    --primary: 234 89.5% 73.9%;
+    --primary: 239 83.5% 66.7%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 4.8% 95.9%;
@@ -30,7 +30,7 @@
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 234 89.5% 73.9%;
+    --ring: 239 83.5% 66.7%;
 
     --radius: 0.5rem;
   }
@@ -72,11 +72,5 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-}
-
-@media (max-width: 640px) {
-  .container {
-    @apply px-4;
   }
 }
