@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { decode } from 'html-entities'
-import { ChevronLeftIcon, RefreshCcwIcon } from 'lucide-react'
+import { ChevronLeftIcon, ListXIcon, RefreshCcwIcon } from 'lucide-react'
 
 import { usePlaylistDetails } from '@/hooks/use-playlist-details'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -67,7 +67,16 @@ export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
               </span>
             </div>
           </div>
-          <DataTable data={data.tracks.items} columns={columns} />
+          {data.tracks.items.length > 0 ? (
+            <DataTable data={data.tracks.items} columns={columns} />
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center gap-2 p-6">
+                <ListXIcon className="size-6" />
+                <p className="text-sm">This playlist is empty</p>
+              </CardContent>
+            </Card>
+          )}
         </>
       ) : (
         <Card>

@@ -12,9 +12,12 @@ import {
   type ColumnFiltersState,
   type SortingState,
 } from '@tanstack/react-table'
-import { SearchIcon } from 'lucide-react'
+import { SearchIcon, Trash2Icon } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -65,6 +68,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     },
   })
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows
+
   return (
     <>
       <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
@@ -85,6 +90,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             options={statuses}
             column={table.getColumn('provider')}
           />
+          {selectedRows.length > 0 && (
+            <Button type="button" variant="outline">
+              <Trash2Icon className="mr-2 h-4 w-4" />
+              Delete
+              <Separator orientation="vertical" className="mx-2 h-4" />
+              <Badge variant="secondary" className="rounded-sm">
+                {selectedRows.length}
+              </Badge>
+            </Button>
+          )}
         </div>
       </div>
       <div className="rounded-md border">
