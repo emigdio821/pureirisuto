@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import type { z } from 'zod'
 
 import { editPlaylistSchema } from '@/lib/schemas/form'
+import { useStore } from '@/lib/store'
 import type { PlaylistItem } from '@/hooks/use-playlists'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -22,7 +23,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Spinner } from '../icons'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
-export function EditPlaylistDetails({ playlist }: { playlist: PlaylistItem }) {
+interface EditPLaylistDetailsProps {
+  playlist: PlaylistItem
+  closeDialog: () => void
+}
+
+export function EditPlaylistDetails({ playlist, closeDialog }: EditPLaylistDetailsProps) {
+  const spotifySdk = useStore((state) => state.spotifySdk)
+
   const form = useForm<z.infer<typeof editPlaylistSchema>>({
     resolver: zodResolver(editPlaylistSchema),
     defaultValues: {
@@ -34,15 +42,22 @@ export function EditPlaylistDetails({ playlist }: { playlist: PlaylistItem }) {
 
   async function onSubmit(values: z.infer<typeof editPlaylistSchema>) {
     try {
-      toast.success('Cool', {
-        description: JSON.stringify(values, null, 2),
+      await spotifySdk?.playlists.changePlaylistDetails(playlist.id, {
+        name: values.title,
+        description: values.description,
+        public: values.isPublic,
+      })
+      closeDialog()
+      toast.success('Playlist updated', {
+        description: 'Updated details may take some time to get reflected',
       })
     } catch (err) {
+      toast.error('Something went wrong, try again')
       console.log('[EDIT_PLAYLIST_ERR]', err)
     }
   }
 
-  console.log(form.formState.errors)
+  console.log(form.getValues())
 
   return (
     <Form {...form}>

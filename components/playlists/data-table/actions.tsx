@@ -45,7 +45,12 @@ export function Actions({ row }: { row: Row<PlaylistItem> }) {
             <DialogTitle>Edit playlist</DialogTitle>
             <DialogDescription>Update playlist details</DialogDescription>
           </DialogHeader>
-          <EditPlaylistDetails playlist={row.original} />
+          <EditPlaylistDetails
+            playlist={row.original}
+            closeDialog={() => {
+              setEditDetails(false)
+            }}
+          />
         </DialogContent>
       </Dialog>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { decode } from 'html-entities'
 import { ChevronLeftIcon, RefreshCcwIcon } from 'lucide-react'
 
 import { usePlaylistDetails } from '@/hooks/use-playlist-details'
@@ -18,7 +19,6 @@ interface PlaylistDetailsParams {
 
 export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
   const { data, isLoading, refetch } = usePlaylistDetails(params.id)
-  console.log(data)
 
   if (isLoading) {
     return <SimpleSkeleton msg="Loading playlist" />
@@ -43,7 +43,7 @@ export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
             <div className="flex flex-col">
               <h3 className="text-xl font-bold sm:text-3xl">{data.name}</h3>
               {data.description && (
-                <p className="mb-2 text-sm text-muted-foreground">{data.description}</p>
+                <p className="mb-2 text-sm text-muted-foreground">{decode(data.description)}</p>
               )}
               <span>
                 <Button variant="link" asChild>
