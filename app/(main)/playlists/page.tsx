@@ -10,7 +10,6 @@ import { SimpleSkeleton } from '@/components/skeletons'
 
 export default function PlaylistsPage() {
   const { data, isLoading } = usePlaylists()
-  console.log(data)
 
   if (isLoading) {
     return <SimpleSkeleton msg="Loading playlists" />
@@ -20,13 +19,14 @@ export default function PlaylistsPage() {
     <>
       <div>
         <h3 className="text-xl font-bold tracking-tight sm:text-2xl">Playlists</h3>
-        {!data && (
-          <p className="text-sm text-muted-foreground">
-            Connect your music provider, and your playlists will be displayed here.
-          </p>
-        )}
+        {!data ||
+          (data.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              Connect your music provider, and your playlists will be displayed here.
+            </p>
+          ))}
       </div>
-      {data ? (
+      {data && data?.length > 0 ? (
         <DataTable columns={columns} data={data} />
       ) : (
         <Card>

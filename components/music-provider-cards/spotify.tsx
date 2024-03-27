@@ -4,7 +4,7 @@ import axios from 'axios'
 import { CircleAlertIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { spotifySdk } from '@/lib/spotify'
+import { useStore } from '@/lib/store'
 import { useSpotifyProfile } from '@/hooks/use-spotify-profile'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -18,16 +18,24 @@ import { ImgPlaceholder } from '@/components/img-placeholder'
 export function SpotifyProviderCard() {
   const [loading, setLoading] = useState(false)
   const [alertOpen, setAlertOpen] = useState(false)
+  const spotifySdk = useStore((state) => state.spotifySdk)
+  const removeSpotifyUser = useStore((state) => state.removeSpotifyUser)
   const { data, error, isLoading, refetch } = useSpotifyProfile()
 
   async function handleDisconnect() {
-    setLoading(true)
-    spotifySdk?.logOut()
-    await axios.post('/api/spotify/disconnect')
-    await refetch()
-    setLoading(false)
-    setAlertOpen(false)
-    toast.success('Disconnected from Spotify')
+    try {
+      setLoading(true)
+      spotifySdk?.logOut()
+      await axios.post('/api/spotify/disconnect')
+      await refetch()
+      removeSpotifyUser()
+      setAlertOpen(false)
+      toast.success('Disconnected from Spotify')
+    } catch (err) {
+      console.log('[SPOTIFY_DISCONNECT_ERR]', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (isLoading) {
@@ -127,7 +135,6 @@ export function SpotifyProviderCard() {
             <span className="text-sm font-semibold">{data.display_name}</span>
             <Button
               variant="link"
-              disabled={loading}
               className="text-xs"
               onClick={() => {
                 setAlertOpen(true)

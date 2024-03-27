@@ -2,7 +2,8 @@ import type { MusicProvider } from '@/types'
 import type { SimplifiedPlaylist } from '@spotify/web-api-ts-sdk'
 import { useQuery } from '@tanstack/react-query'
 
-import { getAccessToken, spotifySdk } from '@/lib/spotify'
+import { getAccessToken } from '@/lib/spotify'
+import { useStore } from '@/lib/store'
 
 export type PlaylistItem = SimplifiedPlaylist & {
   provider: MusicProvider
@@ -11,6 +12,8 @@ export type PlaylistItem = SimplifiedPlaylist & {
 type Playlists = PlaylistItem[]
 
 export function usePlaylists() {
+  const spotifySdk = useStore((state) => state.spotifySdk)
+
   async function getPlaylists() {
     let playlists: Playlists = []
 

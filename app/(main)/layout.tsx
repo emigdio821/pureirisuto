@@ -7,6 +7,7 @@ import { siteConfig } from '@/config/site'
 import { authOptions } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { AppInit } from '@/components/app-init'
 import { UserMenu } from '@/components/user-menu'
 import { MobileSidebar } from '@/components/user/mobile-sidebar'
 import { UserNavigation } from '@/components/user/navigation'
@@ -54,11 +55,13 @@ export default async function MainLayout({ children }: MainLayoutProps) {
             <BrandLink />
             <UserNavigation />
           </span>
-          <UserMenu session={session} hideName />
+          <UserMenu session={session} />
         </div>
       </header>
 
-      <main className="container flex flex-1 flex-col gap-4 py-4">{children}</main>
+      <AppInit>
+        <main className="container flex flex-1 flex-col gap-4 py-4">{children}</main>
+      </AppInit>
     </>
   )
 }

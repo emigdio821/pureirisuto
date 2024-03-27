@@ -1,8 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import axios from 'axios'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
+
+import { useStore } from '@/lib/store'
 
 import { AlertConfirm } from './alert-confirm'
 import { ImgPlaceholder } from './img-placeholder'
@@ -17,37 +21,46 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 
-interface UserMenuProps {
-  session: Session
-  hideName?: boolean
-}
-
-export function UserMenu({ session, hideName }: UserMenuProps) {
+export function UserMenu({ session }: { session: Session }) {
   const { user } = session
+  const [loading, setLoading] = useState(false)
+  const spotifySdk = useStore((state) => state.spotifySdk)
+  const removeSpotifyUser = useStore((state) => state.removeSpotifyUser)
   const [alertOpen, setAlertOpen] = useState(false)
+
+  async function handleLogout() {
+    try {
+      setLoading(true)
+      spotifySdk?.logOut()
+      removeSpotifyUser()
+      await axios.post('/api/spotify/disconnect')
+      await signOut({ callbackUrl: '/login' })
+    } catch (err) {
+      setLoading(false)
+      console.log('[LOGOUT_ERR]', err)
+    }
+  }
 
   return (
     <>
       <AlertConfirm
         open={alertOpen}
+        isActionLoading={loading}
         onOpenChange={setAlertOpen}
-        description="This action is going to end your session"
-        action={async () => {
-          await signOut({ callbackUrl: '/login' })
+        description="This action is going to end all your sessions"
+        action={() => {
+          void handleLogout()
         }}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" variant="unstyledWithHover" className="gap-2 rounded-full">
-            <Avatar className="h-8 w-8 rounded-full">
+          <Button type="button" variant="unstyledWithHover">
+            <Avatar className="h-8 w-8 rounded-md">
               <AvatarImage alt="user avatar" src={user?.image ?? ''} />
               <AvatarFallback asChild>
                 <ImgPlaceholder />
               </AvatarFallback>
             </Avatar>
-            {!hideName && (
-              <span className="text-base font-semibold tracking-tight">{user?.name}</span>
-            )}
             <span className="sr-only">Toggle user menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -57,7 +70,9 @@ export function UserMenu({ session, hideName }: UserMenuProps) {
             <span className="text-xs text-muted-foreground">{user?.email}</span>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem disabled>Profile</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/profile">Profile</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               setAlertOpen(true)

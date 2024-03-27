@@ -1,22 +1,16 @@
 'use client'
 
 import { Fragment } from 'react'
+import type { PlaylistedTrack, Track } from '@spotify/web-api-ts-sdk'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontalIcon } from 'lucide-react'
 
-import type { TrackItem } from '@/types/spotify-api'
 import { msToTime } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 
-export const columns: Array<ColumnDef<TrackItem>> = [
+import { Actions } from './actions'
+import { ProviderTableHeader } from './provider-table-header'
+
+export const columns: Array<ColumnDef<PlaylistedTrack<Track>>> = [
   {
     header: 'Title',
     accessorKey: 'title',
@@ -40,12 +34,8 @@ export const columns: Array<ColumnDef<TrackItem>> = [
   },
   {
     header: 'Provider',
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline">
-          <span className="text-[#1DB954]">Spotify</span>
-        </Badge>
-      )
+    cell: () => {
+      return <ProviderTableHeader />
     },
   },
   {
@@ -100,30 +90,7 @@ export const columns: Array<ColumnDef<TrackItem>> = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <a href={`https://open.spotify.com/track/${row.original.track.id}`} target="_blank">
-                <span>
-                  Open on <span className="font-semibold">Spotify</span>
-                </span>
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Add to playlist</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <span className="text-destructive">Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+      return <Actions row={row} />
     },
   },
 ]

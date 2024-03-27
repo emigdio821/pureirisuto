@@ -2,20 +2,14 @@
 
 import Link from 'next/link'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontalIcon } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
 import type { PlaylistItem } from '@/hooks/use-playlists'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { ProviderBadge } from '@/components/provider-badge'
+
+import { Actions } from './actions'
 
 export const columns: Array<ColumnDef<PlaylistItem>> = [
   {
@@ -67,20 +61,7 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
     },
     cell: ({ row }) => {
       const provider = row.original.provider
-
-      return (
-        <Badge variant="outline">
-          <span
-            className={cn('text-center', {
-              'text-[#ff0000]': provider === 'YouTube Music',
-              'text-[#1db954]': provider === 'Spotify',
-              'text-[#f94c57]': provider === 'Apple Music',
-            })}
-          >
-            {provider}
-          </span>
-        </Badge>
-      )
+      return <ProviderBadge provider={provider} />
     },
   },
   {
@@ -111,33 +92,7 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href={`/playlists/${row.original.id}`}>Open</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <a href={`https://open.spotify.com/playlist/${row.original.id}`} target="_blank">
-                <span>
-                  Open on <span className="font-semibold">Spotify</span>
-                </span>
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Edit details</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <span className="text-destructive">Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+      return <Actions row={row} />
     },
   },
 ]
