@@ -9,10 +9,10 @@ const ME_EP = 'https://api.spotify.com/v1/me'
 
 export async function GET() {
   try {
-    const { access_token: AT } = await getAccessToken()
+    const atData = await getAccessToken()
     const { data } = await axios.get<SpotifyMeResponse>(ME_EP, {
       headers: {
-        Authorization: `Bearer ${AT}`,
+        Authorization: `Bearer ${atData?.access_token}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     })

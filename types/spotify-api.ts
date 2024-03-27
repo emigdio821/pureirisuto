@@ -119,5 +119,6 @@ export interface Artist {
 }
 
 export interface Album {
+  id: string
   name: string
 }

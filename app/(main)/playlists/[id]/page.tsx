@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { ChevronLeftIcon, ExternalLinkIcon, RefreshCcwIcon } from 'lucide-react'
+import { ChevronLeftIcon, RefreshCcwIcon } from 'lucide-react'
 
 import { usePlaylistDetails } from '@/hooks/use-playlist-details'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { ImgPlaceholder } from '@/components/img-placeholder'
+import { Separator } from '@/components/ui/separator'
 import { DataTable } from '@/components/playlists/details/data-table'
 import { columns } from '@/components/playlists/details/data-table/columns'
 import { SimpleSkeleton } from '@/components/skeletons'
@@ -37,31 +37,37 @@ export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
         <>
           <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
             <Avatar className="h-36 w-36 rounded-md sm:h-48 sm:w-48">
-              <AvatarImage alt={`${data.name} playlist image`} src={data.images[0].url ?? ''} />
-              <AvatarFallback asChild className="rounded-md">
-                <ImgPlaceholder />
-              </AvatarFallback>
+              <AvatarImage alt={`${data.name} playlist image`} src={data.images[0].url} />
+              <AvatarFallback className="rounded-md" />
             </Avatar>
             <div className="flex flex-col">
               <h3 className="text-xl font-bold sm:text-3xl">{data.name}</h3>
               {data.description && (
                 <p className="mb-2 text-sm text-muted-foreground">{data.description}</p>
               )}
-              <span>{data.owner.display_name}</span>
-              <span className="text-sm">
-                {data.tracks.total} tracks · {data.public ? 'Public' : 'Private'} playlist
-              </span>
               <span>
-                <Button variant="link" className="" asChild>
+                <Button variant="link" asChild>
+                  <a href={`https://open.spotify.com/user/${data.owner.id}`} target="_blank">
+                    {data.owner.display_name}
+                  </a>
+                </Button>
+              </span>
+              <span className="flex items-center gap-2 text-sm">
+                {data.public ? 'Public' : 'Private'} playlist{' '}
+                <Separator orientation="vertical" className="h-4" /> {data.tracks.total} tracks{' '}
+                <Separator orientation="vertical" className="h-4" /> {data.followers.total}{' '}
+                {data.followers.total > 1 ? 'followers' : 'follower'}
+              </span>
+              <span className="mt-2">
+                <Button variant="outline" asChild>
                   <a href={`https://open.spotify.com/playlist/${data.id}`} target="_blank">
-                    Spotify
-                    <ExternalLinkIcon className="ml-2 h-4 w-4" />
+                    Open on Spotify
                   </a>
                 </Button>
               </span>
             </div>
           </div>
-          {data.tracks.items && <DataTable data={data.tracks.items} columns={columns} />}
+          <DataTable data={data.tracks.items} columns={columns} />
         </>
       ) : (
         <Card>

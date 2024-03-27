@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const requiredEnv = z.string().trim().min(1, 'Required field')
+const requiredEnv = z.string().trim().min(1, 'Required env variable')
 
 const envSchema = z.object({
   NEXTAUTH_URL: requiredEnv,

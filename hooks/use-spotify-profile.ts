@@ -1,19 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
-import axios, { isAxiosError } from 'axios'
 
-import type { SpotifyMeResponse } from '@/types/spotify-api'
-
-const EP = `${process.env.NEXT_PUBLIC_API_URL}/spotify/profile`
+import { getAccessToken, spotifySdk } from '@/lib/spotify'
 
 export function useSpotifyProfile() {
   async function getSpotifyProfile() {
     try {
-      const { data } = await axios.get<SpotifyMeResponse>(EP)
+      const token = await getAccessToken()
+      if (!token?.access_token) {
+        return null
+      }
+
+      const data = await spotifySdk?.currentUser.profile()
 
       return data
     } catch (err) {
       let errorMsg = 'Something went wrong while fetching Spotify profile'
-      if (isAxiosError(err)) {
+      if (err instanceof Error) {
         errorMsg = err.message
       }
       console.log('[SPOTIFY_PROFILE_ERR]', errorMsg)

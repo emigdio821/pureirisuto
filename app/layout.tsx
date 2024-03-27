@@ -6,7 +6,7 @@ import '@/styles/globals.css'
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
-// import Footer from '@/components/footer'
+import { Footer } from '@/components/footer'
 import { Providers } from '@/components/providers'
 
 interface RootLayoutProps {
@@ -26,6 +26,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   creator: 'Emigdio Torres',
+  icons: siteConfig.icons,
 }
 
 export const viewport: Viewport = {
@@ -41,13 +42,13 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       <head />
       <body
         className={cn(
-          'relative flex min-h-screen flex-col bg-background antialiased ',
+          'relative flex min-h-screen flex-col bg-background antialiased',
           fontSans.className,
         )}
       >
         <Providers>
           <main>{children}</main>
-          {/* <Footer /> */}
+          <Footer />
           <Toaster />
         </Providers>
       </body>

@@ -1,10 +1,10 @@
 'use client'
 
-import { LogOutIcon, MoonIcon, SunIcon } from 'lucide-react'
+import { useState } from 'react'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
-import { useTheme } from 'next-themes'
 
+import { AlertConfirm } from './alert-confirm'
 import { ImgPlaceholder } from './img-placeholder'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -17,47 +17,56 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 
-export function UserMenu({ session }: { session: Session }) {
+interface UserMenuProps {
+  session: Session
+  hideName?: boolean
+}
+
+export function UserMenu({ session, hideName }: UserMenuProps) {
   const { user } = session
-  const { setTheme, resolvedTheme } = useTheme()
+  const [alertOpen, setAlertOpen] = useState(false)
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="unstyledWithHover" className="ml-auto h-8 w-8 rounded-full">
-          <Avatar className="h-full w-full">
-            <AvatarImage alt="user avatar" src={user?.image ?? ''} />
-            <AvatarFallback asChild>
-              <ImgPlaceholder />
-            </AvatarFallback>
-          </Avatar>
-          <span className="sr-only">Toggle user menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="flex flex-col">
-          <span className="text-base">{user?.name}</span>
-          <span className="text-xs text-muted-foreground">{user?.email}</span>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => {
-            setTheme(resolvedTheme === 'light' ? 'dark' : 'light')
-          }}
-        >
-          <SunIcon className="mr-2 hidden h-4 w-4 dark:block" />
-          <MoonIcon className="mr-2 block h-4 w-4 dark:hidden" />
-          Toggle theme
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={async () => {
-            await signOut({ callbackUrl: '/login' })
-          }}
-        >
-          <LogOutIcon className="mr-2 h-4 w-4" />
-          Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <AlertConfirm
+        open={alertOpen}
+        onOpenChange={setAlertOpen}
+        description="This action is going to end your session"
+        action={async () => {
+          await signOut({ callbackUrl: '/login' })
+        }}
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" variant="unstyledWithHover" className="gap-2 rounded-full">
+            <Avatar className="h-8 w-8 rounded-full">
+              <AvatarImage alt="user avatar" src={user?.image ?? ''} />
+              <AvatarFallback asChild>
+                <ImgPlaceholder />
+              </AvatarFallback>
+            </Avatar>
+            {!hideName && (
+              <span className="text-base font-semibold tracking-tight">{user?.name}</span>
+            )}
+            <span className="sr-only">Toggle user menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel className="flex flex-col">
+            <span className="text-base">{user?.name}</span>
+            <span className="text-xs text-muted-foreground">{user?.email}</span>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem disabled>Profile</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setAlertOpen(true)
+            }}
+          >
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }

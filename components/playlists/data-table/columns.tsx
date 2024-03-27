@@ -4,8 +4,11 @@ import Link from 'next/link'
 import type { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontalIcon } from 'lucide-react'
 
-import type { PlaylistItem } from '@/types/spotify-api'
+import { cn } from '@/lib/utils'
+import type { PlaylistItem } from '@/hooks/use-playlists'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,38 +19,93 @@ import {
 
 export const columns: Array<ColumnDef<PlaylistItem>> = [
   {
-    accessorKey: 'name',
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => {
+          table.toggleAllPageRowsSelected(!!value)
+        }}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => {
+          row.toggleSelected(!!value)
+        }}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     header: 'Title',
-    cell: ({ row }) => {
-      return <span className="block max-w-sm">{row.original.name}</span>
-    },
+    accessorKey: 'name',
+    // filterFn: (row, _, value: string) => {
+    //   const name = row.original.name
+    //   return name.toLowerCase().includes(value.toLowerCase())
+    // },
+    cell: ({ row }) => (
+      <span className="block min-w-[200px] max-w-sm">
+        <Button asChild variant="link" className="whitespace-normal text-foreground">
+          <Link href={`/playlists/${row.original.id}`}>{row.original.name}</Link>
+        </Button>
+      </span>
+    ),
   },
   {
-    accessorKey: 'provider',
     header: 'Provider',
+    accessorKey: 'provider',
+    filterFn: (row, id, value: string) => {
+      const rowValue: string = row.getValue(id)
+      return value.includes(rowValue.toLocaleLowerCase())
+    },
     cell: ({ row }) => {
-      return 'Spotify' // TODO: Retrieve Music Provider
+      const provider = row.original.provider
+
+      return (
+        <Badge variant="outline">
+          <span
+            className={cn('text-center', {
+              'text-[#ff0000]': provider === 'YouTube Music',
+              'text-[#1db954]': provider === 'Spotify',
+              'text-[#f94c57]': provider === 'Apple Music',
+            })}
+          >
+            {provider}
+          </span>
+        </Badge>
+      )
     },
   },
   {
-    accessorKey: 'tracks',
     header: 'Tracks',
     cell: ({ row }) => {
-      return row.original.tracks.total
+      return row.original.tracks?.total ?? 0
     },
   },
   {
-    accessorKey: 'owner',
     header: 'Owner',
     cell: ({ row }) => {
-      return row.original.owner.display_name
+      const owner = row.original.owner
+      return (
+        <Button variant="link" className="text-foreground" asChild>
+          <a href={`https://open.spotify.com/user/${owner.id}`} target="_blank">
+            {owner.display_name}
+          </a>
+        </Button>
+      )
     },
   },
   {
-    accessorKey: 'type',
     header: 'Type',
     cell: ({ row }) => {
-      return row.original.public ? 'Public' : 'Private'
+      return <Badge variant="outline">{row.original.public ? 'Public' : 'Private'}</Badge>
     },
   },
   {
