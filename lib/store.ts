@@ -9,6 +9,7 @@ export interface StoreState {
   connectedProviders: MusicProvider[]
   addSpotifySdk: (spotifySdk: SpotifyApi) => void
   addSpotifyUser: (spotifyUser: SpotifyUser) => void
+  removeSpotifySdk: () => void
   removeSpotifyUser: () => void
 }
 
@@ -21,6 +22,9 @@ const storeCreator: StateCreator<StoreState> = (set) => ({
   },
   addSpotifyUser: (spotifyUser: SpotifyUser) => {
     set((state) => ({ ...state, spotifyUser }))
+  },
+  removeSpotifySdk: () => {
+    set((state) => ({ ...state, spotifySdk: null }))
   },
   removeSpotifyUser: () => {
     set((state) => ({ ...state, spotifyUser: null }))

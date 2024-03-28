@@ -4,6 +4,7 @@ import type { Row } from '@tanstack/react-table'
 import { MoreHorizontalIcon } from 'lucide-react'
 
 import { useStore } from '@/lib/store'
+import { generatePlaylistDetailsUrl, generatePlaylistExternalOpen } from '@/lib/utils'
 import type { PlaylistItem } from '@/hooks/use-playlists'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,23 +24,22 @@ import {
 import { EditPlaylistDetails } from '@/components/form/edit-playlist-details'
 
 export function Actions({ row }: { row: Row<PlaylistItem> }) {
+  const id = row.original.id
+  const provider = row.original.provider
   const [editDetails, setEditDetails] = useState(false)
+  const [loading, setLoading] = useState(false)
   const spotifyUser = useStore((state) => state.spotifyUser)
-
-  function generateExternalOpen(id: string) {
-    switch (row.original.provider) {
-      case 'Spotify':
-        return `https://open.spotify.com/playlist/${id}`
-      case 'YouTube Music':
-        return `https://music.youtube.com/watch?v=${id}`
-      case 'Apple Music':
-        return `https://music.apple.com/playlist/${id}`
-    }
-  }
 
   return (
     <>
-      <Dialog open={editDetails} onOpenChange={setEditDetails}>
+      <Dialog
+        open={editDetails}
+        onOpenChange={(opened) => {
+          if (!loading) {
+            setEditDetails(opened)
+          }
+        }}
+      >
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Edit playlist</DialogTitle>
@@ -47,6 +47,7 @@ export function Actions({ row }: { row: Row<PlaylistItem> }) {
           </DialogHeader>
           <EditPlaylistDetails
             playlist={row.original}
+            setLoading={setLoading}
             closeDialog={() => {
               setEditDetails(false)
             }}
@@ -63,10 +64,10 @@ export function Actions({ row }: { row: Row<PlaylistItem> }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/playlists/${row.original.id}`}>Open</Link>
+            <Link href={generatePlaylistDetailsUrl(id, provider)}>Open</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a href={generateExternalOpen(row.original.id)} target="_blank">
+            <a target="_blank" href={generatePlaylistExternalOpen(id, provider)}>
               <span>
                 View on <span className="font-semibold">{row.original.provider}</span>
               </span>

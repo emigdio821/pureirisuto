@@ -6,7 +6,6 @@ import { signOut } from 'next-auth/react'
 
 import { useStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
-import { CardContent } from '@/components/ui/card'
 import { AlertConfirm } from '@/components/alert-confirm'
 
 export function ProfileCardContent() {
@@ -39,15 +38,13 @@ export function ProfileCardContent() {
           void handleLogout()
         }}
       />
-      <CardContent>
-        <Button
-          onClick={() => {
-            setAlertOpen(true)
-          }}
-        >
-          Logout
-        </Button>
-      </CardContent>
+      <Button
+        onClick={() => {
+          setAlertOpen(true)
+        }}
+      >
+        Logout
+      </Button>
     </>
   )
 }

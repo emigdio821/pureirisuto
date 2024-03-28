@@ -19,6 +19,7 @@ const scopes = [
   'playlist-read-collaborative',
   'playlist-modify-public',
   'playlist-modify-private',
+  'ugc-image-upload',
 ].join(',')
 
 const params = {

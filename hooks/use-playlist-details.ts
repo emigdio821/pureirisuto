@@ -2,7 +2,6 @@ import type { MusicProvider } from '@/types'
 import type { Playlist, Track } from '@spotify/web-api-ts-sdk'
 import { useQuery } from '@tanstack/react-query'
 
-import { getAccessToken } from '@/lib/spotify'
 import { useStore } from '@/lib/store'
 
 // export type TrackItem = PlaylistedTrack<Track> & {
@@ -25,9 +24,6 @@ export function usePlaylistDetails(id: string) {
   async function getPlaylistDetails() {
     let details: PlaylistDetails = null
     try {
-      const token = await getAccessToken()
-      if (!token?.access_token) return details
-
       const data = await spotifySdk?.playlists.getPlaylist(id)
       if (data) {
         details = {

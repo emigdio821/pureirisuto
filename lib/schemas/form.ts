@@ -12,4 +12,5 @@ export const editPlaylistSchema = z.object({
   title: requiredField,
   description: optionalField,
   isPublic: z.boolean(),
+  cover: optionalField,
 })

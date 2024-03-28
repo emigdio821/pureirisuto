@@ -17,12 +17,10 @@ interface PlaylistDetailsParams {
   params: { id: string }
 }
 
-export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
+export default function YTMusicPlaylistDetails({ params }: PlaylistDetailsParams) {
   const { data, isLoading, refetch } = usePlaylistDetails(params.id)
 
-  if (isLoading) {
-    return <SimpleSkeleton msg="Loading playlist" />
-  }
+  if (isLoading) return <SimpleSkeleton msg="Loading playlist" />
 
   return (
     <>
@@ -43,24 +41,33 @@ export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
             <div className="flex flex-col">
               <h3 className="text-xl font-bold sm:text-3xl">{data.name}</h3>
               {data.description && (
-                <p className="mb-2 text-sm text-muted-foreground">{decode(data.description)}</p>
+                <p className="mb-2 text-sm text-muted-foreground">
+                  {decode(data.description)}
+                </p>
               )}
               <span>
                 <Button variant="link" asChild>
-                  <a href={`https://open.spotify.com/user/${data.owner.id}`} target="_blank">
+                  <a
+                    href={`https://open.spotify.com/user/${data.owner.id}`}
+                    target="_blank"
+                  >
                     {data.owner.display_name}
                   </a>
                 </Button>
               </span>
               <span className="flex items-center gap-2 text-sm">
                 {data.public ? 'Public' : 'Private'} playlist{' '}
-                <Separator orientation="vertical" className="h-4" /> {data.tracks.total} tracks{' '}
-                <Separator orientation="vertical" className="h-4" /> {data.followers.total}{' '}
+                <Separator orientation="vertical" className="h-4" /> {data.tracks.total}{' '}
+                tracks <Separator orientation="vertical" className="h-4" />{' '}
+                {data.followers.total}{' '}
                 {data.followers.total > 1 ? 'followers' : 'follower'}
               </span>
               <span className="mt-2">
                 <Button variant="outline" asChild>
-                  <a href={`https://open.spotify.com/playlist/${data.id}`} target="_blank">
+                  <a
+                    href={`https://open.spotify.com/playlist/${data.id}`}
+                    target="_blank"
+                  >
                     Open on Spotify
                   </a>
                 </Button>
@@ -81,6 +88,7 @@ export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
       ) : (
         <Card>
           <CardContent className="flex flex-col items-center justify-center gap-2 p-6">
+            <ListXIcon className="size-6" />
             <p className="text-sm">We could not find this playlist</p>
             <Button
               variant="link"
@@ -89,7 +97,7 @@ export default function PlaylistDetails({ params }: PlaylistDetailsParams) {
               }}
             >
               <RefreshCcwIcon className="mr-2 h-4 w-4" />
-              Reload
+              Try again
             </Button>
           </CardContent>
         </Card>

@@ -103,7 +103,6 @@ export function SpotifyProviderCard() {
         open={alertOpen}
         isActionLoading={loading}
         onOpenChange={(opened) => {
-          console.log(loading)
           if (!loading) {
             setAlertOpen(opened)
           }

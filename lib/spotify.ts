@@ -11,9 +11,9 @@ export async function getAccessToken() {
   const sdk = useStore.getState().spotifySdk
   const token = await sdk?.getAccessToken()
 
-  if (!token?.access_token) {
+  if (!token) {
     const { data } = await axios.get<AccessToken | null>('/api/spotify/access-token')
-    if (data?.access_token) {
+    if (data) {
       await initSdk()
     }
 
@@ -24,25 +24,33 @@ export async function getAccessToken() {
 }
 
 export async function initSdk() {
-  const accessTokenCookie = getCookie('spotify.access-token')
+  const tokenCookie = getCookie('spotify.access-token')
+  let token: AccessToken | null = null
 
-  if (accessTokenCookie) {
-    const storeState = useStore.getState()
-    const accessToken = JSON.parse(accessTokenCookie) as AccessToken
-    const sdk = SpotifyApi.withAccessToken(NEXT_PUBLIC_SPOTIFY_CLIENT_ID, accessToken)
-    const providers = storeState.connectedProviders
-    const hasSpotifyProvider = providers.some((provider) => provider === 'Spotify')
-    const user = await sdk.currentUser.profile()
-
-    useStore.setState({
-      ...storeState,
-      spotifySdk: sdk,
-      spotifyUser: user,
-      connectedProviders: !hasSpotifyProvider
-        ? [...storeState.connectedProviders, 'Spotify']
-        : storeState.connectedProviders,
-    })
+  if (tokenCookie) {
+    token = JSON.parse(tokenCookie) as AccessToken
+  } else {
+    token = await getAccessToken()
   }
 
-  return null
+  if (token) {
+    await handleStoreState(token)
+  }
+}
+
+async function handleStoreState(accessToken: AccessToken) {
+  const storeState = useStore.getState()
+  const sdk = SpotifyApi.withAccessToken(NEXT_PUBLIC_SPOTIFY_CLIENT_ID, accessToken)
+  const providers = storeState.connectedProviders
+  const hasSpotifyProvider = providers.some((provider) => provider === 'Spotify')
+  const user = await sdk.currentUser.profile()
+
+  useStore.setState({
+    ...storeState,
+    spotifySdk: sdk,
+    spotifyUser: user,
+    connectedProviders: !hasSpotifyProvider
+      ? [...storeState.connectedProviders, 'Spotify']
+      : storeState.connectedProviders,
+  })
 }

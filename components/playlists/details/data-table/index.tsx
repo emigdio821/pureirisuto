@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DataTableDeleteRowsBtn } from '@/components/data-table-delete-rows-btn'
 import { DataTablePagination } from '@/components/data-table-pagination'
 
 interface DataTableProps<TData, TValue> {
@@ -30,7 +31,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
@@ -51,16 +55,22 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <>
-      <div className="relative">
-        <span className="absolute left-2 flex h-full items-center">
-          <SearchIcon className="h-4 w-4" />
-        </span>
-        <Input
-          className="w-44 pl-8"
-          placeholder="Search"
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('title')?.setFilterValue(event.target.value)}
-        />
+      <div className="flex items-center gap-2 self-start">
+        <div className="relative">
+          <span className="absolute left-2 flex h-full items-center">
+            <SearchIcon className="h-4 w-4" />
+          </span>
+          <Input
+            className="w-44 pl-8"
+            placeholder="Search"
+            value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
+            onChange={(event) =>
+              table.getColumn('title')?.setFilterValue(event.target.value)
+            }
+          />
+        </div>
+
+        <DataTableDeleteRowsBtn table={table} />
       </div>
 
       <div className="rounded-md border">

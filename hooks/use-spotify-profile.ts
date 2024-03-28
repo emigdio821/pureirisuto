@@ -1,7 +1,6 @@
 import type { UserProfile } from '@spotify/web-api-ts-sdk'
 import { useQuery } from '@tanstack/react-query'
 
-import { getAccessToken } from '@/lib/spotify'
 import { useStore } from '@/lib/store'
 
 export function useSpotifyProfile() {
@@ -10,9 +9,6 @@ export function useSpotifyProfile() {
   async function getSpotifyProfile() {
     let profile: UserProfile | null = null
     try {
-      const token = await getAccessToken()
-      if (!token?.access_token) return profile
-
       profile = (await spotifySdk?.currentUser.profile()) ?? null
     } catch (err) {
       let errorMsg = 'Something went wrong while fetching Spotify profile'

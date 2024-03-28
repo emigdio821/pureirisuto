@@ -2,7 +2,6 @@ import type { MusicProvider } from '@/types'
 import type { SimplifiedPlaylist } from '@spotify/web-api-ts-sdk'
 import { useQuery } from '@tanstack/react-query'
 
-import { getAccessToken } from '@/lib/spotify'
 import { useStore } from '@/lib/store'
 
 export type PlaylistItem = SimplifiedPlaylist & {
@@ -18,8 +17,6 @@ export function usePlaylists() {
     let playlists: Playlists = []
 
     try {
-      const token = await getAccessToken()
-      if (!token?.access_token) return playlists
       const data = await spotifySdk?.currentUser.playlists.playlists()
       if (data) {
         const spotifyData: PlaylistItem[] = data.items.map((item) => ({

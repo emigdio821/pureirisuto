@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import type { ColumnDef } from '@tanstack/react-table'
 
+import { generateOwnerExternalOpen, generatePlaylistDetailsUrl } from '@/lib/utils'
 import type { PlaylistItem } from '@/hooks/use-playlists'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,7 +18,8 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(!!value)
@@ -47,7 +49,9 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
     cell: ({ row }) => (
       <span className="block min-w-[200px] max-w-sm">
         <Button asChild variant="link" className="whitespace-normal text-foreground">
-          <Link href={`/playlists/${row.original.id}`}>{row.original.name}</Link>
+          <Link href={generatePlaylistDetailsUrl(row.original.id, row.original.provider)}>
+            {row.original.name}
+          </Link>
         </Button>
       </span>
     ),
@@ -76,7 +80,10 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
       const owner = row.original.owner
       return (
         <Button variant="link" className="text-foreground" asChild>
-          <a href={`https://open.spotify.com/user/${owner.id}`} target="_blank">
+          <a
+            target="_blank"
+            href={generateOwnerExternalOpen(owner.id, row.original.provider)}
+          >
             {owner.display_name}
           </a>
         </Button>

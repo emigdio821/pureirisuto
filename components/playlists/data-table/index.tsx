@@ -12,12 +12,10 @@ import {
   type ColumnFiltersState,
   type SortingState,
 } from '@tanstack/react-table'
-import { SearchIcon, Trash2Icon } from 'lucide-react'
+import { SearchIcon } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { useStore } from '@/lib/store'
 import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -26,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DataTableDeleteRowsBtn } from '@/components/data-table-delete-rows-btn'
 import { DataTableFacetedFilter } from '@/components/data-table-faceted-filter'
 import { DataTablePagination } from '@/components/data-table-pagination'
 
@@ -34,24 +33,17 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export const statuses = [
-  {
-    value: 'spotify',
-    label: 'Spotify',
-  },
-  {
-    value: 'youtube music',
-    label: 'YouTube Music',
-  },
-  {
-    value: 'apple music',
-    label: 'Apple Music',
-  },
-]
-
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
+  const connectedProviders = useStore((state) => state.connectedProviders)
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const PROVIDERS_FILTER = connectedProviders.map((provider) => ({
+    label: provider,
+    value: provider.toLowerCase(),
+  }))
 
   const table = useReactTable({
     data,
@@ -68,8 +60,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     },
   })
 
-  const selectedRows = table.getFilteredSelectedRowModel().rows
-
   return (
     <>
       <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
@@ -82,26 +72,22 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               className="w-44 pl-8"
               placeholder="Search"
               value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-              onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+              onChange={(event) =>
+                table.getColumn('name')?.setFilterValue(event.target.value)
+              }
             />
           </div>
-          <DataTableFacetedFilter
-            title="Provider"
-            options={statuses}
-            column={table.getColumn('provider')}
-          />
-          {selectedRows.length > 0 && (
-            <Button type="button" variant="outline">
-              <Trash2Icon className="mr-2 h-4 w-4" />
-              Delete
-              <Separator orientation="vertical" className="mx-2 h-4" />
-              <Badge variant="secondary" className="rounded-sm">
-                {selectedRows.length}
-              </Badge>
-            </Button>
+          {PROVIDERS_FILTER.length > 1 && (
+            <DataTableFacetedFilter
+              title="Provider"
+              options={PROVIDERS_FILTER}
+              column={table.getColumn('provider')}
+            />
           )}
+          <DataTableDeleteRowsBtn table={table} />
         </div>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -140,6 +126,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           </TableBody>
         </Table>
       </div>
+
       <DataTablePagination table={table} />
     </>
   )

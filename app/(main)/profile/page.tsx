@@ -4,7 +4,13 @@ import { getServerSession } from 'next-auth'
 
 import { authOptions } from '@/lib/auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { ImgPlaceholder } from '@/components/img-placeholder'
 import { ProfileCardContent } from '@/components/profile/card-content'
 
@@ -30,7 +36,10 @@ export default async function ProfilePage() {
           <CardTitle>{user?.name}</CardTitle>
           <CardDescription>{user?.email}</CardDescription>
         </CardHeader>
-        <ProfileCardContent />
+
+        <CardContent className="space-y-2">
+          <ProfileCardContent />
+        </CardContent>
       </Card>
     </>
   )
