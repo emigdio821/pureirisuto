@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import type { z } from 'zod'
 
 import { editPlaylistSchema } from '@/lib/schemas/form'
-import { useStore } from '@/lib/store'
 import { resizeImageToMaxSizeBase64 } from '@/lib/utils'
 import type { PlaylistItem } from '@/hooks/use-playlists'
 import { Button } from '@/components/ui/button'
@@ -33,7 +32,6 @@ interface EditPLaylistDetailsProps {
 
 export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
   const { playlist, closeDialog, setLoading } = props
-  const spotifySdk = useStore((state) => state.spotifySdk)
   const decodedDescription = decode(playlist.description)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -74,23 +72,23 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
   }
 
   async function updateSpotifyPLaylist(values: z.infer<typeof editPlaylistSchema>) {
-    await spotifySdk?.playlists.changePlaylistDetails(playlist.id, {
-      name: values.title,
-      description: values.description,
-      public: values.isPublic,
-    })
-    if (values.cover) {
-      await spotifySdk?.playlists.addCustomPlaylistCoverImageFromBase64String(
-        playlist.id,
-        values.cover,
-      )
-    }
+    console.log('edit values', values)
+    // await spotifySdk?.playlists.changePlaylistDetails(playlist.id, {
+    //   name: values.title,
+    //   description: values.description,
+    //   public: values.isPublic,
+    // })
+    // if (values.cover) {
+    //   await spotifySdk?.playlists.addCustomPlaylistCoverImageFromBase64String(
+    //     playlist.id,
+    //     values.cover,
+    //   )
+    // }
   }
 
   async function onSubmit(values: z.infer<typeof editPlaylistSchema>) {
     setLoading(true)
     try {
-      console.log(values)
       if (playlist.provider === 'Spotify') {
         await updateSpotifyPLaylist(values)
       }
@@ -119,7 +117,12 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
           <AvatarFallback className="rounded-md" />
         </Avatar>
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <form
+        onSubmit={(e) => {
+          void form.handleSubmit(onSubmit)(e)
+        }}
+        className="flex flex-col gap-2"
+      >
         <FormField
           control={form.control}
           name="cover"

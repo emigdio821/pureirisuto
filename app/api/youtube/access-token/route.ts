@@ -23,11 +23,7 @@ function handleCookies(data: GoogleCredentials) {
   }
 }
 
-export async function exchangeCode() {
-  await getAccessToken()
-}
-
-export async function getAccessToken() {
+async function getAccessToken() {
   const oauth2Client = new google.auth.OAuth2(
     YT_CLIENT_ID,
     YT_CLIENT_SECRET,
@@ -58,6 +54,6 @@ export async function getAccessToken() {
 
 export async function GET() {
   const data = await getAccessToken()
-  // if (!data) return new Response(null, { status: 204 })
+  if (!data) return new Response(null, { status: 204 })
   return NextResponse.json(data)
 }

@@ -34,8 +34,8 @@ export async function DELETE(req: NextRequest) {
 
   if (uris.length > 0) {
     await Promise.all(
-      uris.map((uri) => {
-        return youtubeSdk.playlistItems.delete({
+      uris.map(async (uri) => {
+        return await youtubeSdk.playlistItems.delete({
           id: uri,
           access_token: token.access_token,
         })

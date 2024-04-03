@@ -23,7 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { AlertConfirm } from '@/components/alert-confirm'
 import { DataTableDeleteRowsBtn } from '@/components/data-table-delete-rows-btn'
 import { DataTablePagination } from '@/components/data-table-pagination'
 

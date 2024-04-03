@@ -27,7 +27,13 @@ export function SignInOptions() {
   }
 
   return (
-    <Button variant="outline" disabled={isLoading} onClick={handleSignIn}>
+    <Button
+      variant="outline"
+      disabled={isLoading}
+      onClick={() => {
+        void handleSignIn()
+      }}
+    >
       Continue with Github
       {isLoading ? <Spinner className="ml-2" /> : <GithubIcon className="ml-2 h-4 w-4" />}
     </Button>

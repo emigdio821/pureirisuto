@@ -13,14 +13,14 @@ const basic = Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toStr
 )
 const TOKEN_EP = 'https://accounts.spotify.com/api/token'
 
-export async function getAccessToken(cbCode?: string) {
+async function getAccessToken() {
   const accessToken = cookies().get('spotify.access-token')
 
   if (accessToken?.value) {
     return JSON.parse(accessToken.value) as AccessToken
   }
 
-  const code = cbCode ?? cookies().get('spotify.code')?.value
+  const code = cookies().get('spotify.code')?.value
 
   try {
     const { data } = await axios.post<AccessToken>(
@@ -62,10 +62,6 @@ export async function getAccessToken(cbCode?: string) {
   }
 }
 
-export async function exchangeCode(code: string) {
-  await getAccessToken(code)
-}
-
 async function refreshAccessToken() {
   const refreshToken = cookies().get('spotify.refresh-token')
 
@@ -102,6 +98,7 @@ function handleCookies(data: AccessToken) {
 
 export async function GET() {
   const data = await getAccessToken()
+  if (!data) return new Response(null, { status: 204 })
 
   return NextResponse.json(data)
 }
