@@ -31,9 +31,7 @@ export default function SpotifyPlaylistDetails({ params }: PlaylistDetailsParams
   const [editDetails, setEditDetails] = useState(false)
   const { data, isLoading, refetch } = usePlaylistDetails(params.id, 'Spotify')
 
-  if (isLoading) {
-    return <SimpleSkeleton msg="Loading playlist" />
-  }
+  if (isLoading) return <SimpleSkeleton msg="Retrieving details" />
 
   return (
     <>

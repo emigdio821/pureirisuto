@@ -37,7 +37,9 @@ export function useYoutubeInitData() {
         id={toastId}
         provider="YouTube"
         isLoading={reconnecting}
-        callback={handleReconnect}
+        callback={() => {
+          void handleReconnect()
+        }}
       />,
       {
         id: toastId,
@@ -57,7 +59,10 @@ export function useYoutubeInitData() {
     async function getInitialData() {
       setLoading(true)
       const { data: token } = await getToken()
-      if (!token) return
+      if (!token) {
+        setLoading(false)
+        return
+      }
 
       await initYouTube()
 

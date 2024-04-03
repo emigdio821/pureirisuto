@@ -37,7 +37,9 @@ export function useSpotifyInitData() {
         id={toastId}
         provider="Spotify"
         isLoading={reconnecting}
-        callback={handleReconnect}
+        callback={() => {
+          void handleReconnect()
+        }}
       />,
       {
         id: toastId,
@@ -57,7 +59,10 @@ export function useSpotifyInitData() {
     async function getInitialData() {
       setLoading(true)
       const { data: token } = await getSpotifyToken()
-      if (!token) return
+      if (!token) {
+        setLoading(false)
+        return
+      }
 
       await initSpotify()
 
