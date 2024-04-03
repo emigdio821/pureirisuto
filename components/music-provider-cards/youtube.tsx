@@ -4,8 +4,7 @@ import axios from 'axios'
 import { CircleAlertIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { useStore } from '@/lib/store'
-import { useSpotifyProfile } from '@/hooks/use-spotify-profile'
+import { useGoogleProfile } from '@/hooks/use-google-profile'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -18,25 +17,25 @@ import {
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertConfirm } from '@/components/alert-confirm'
-import { SpotifyIcon } from '@/components/icons'
+import { YTMusicIcon } from '@/components/icons'
 import { ImgPlaceholder } from '@/components/img-placeholder'
 
-export function SpotifyProviderCard() {
+const provider = 'YouTube'
+
+export function YouTubeProviderCard() {
   const [loading, setLoading] = useState(false)
   const [alertOpen, setAlertOpen] = useState(false)
-  const removeProfile = useStore((state) => state.removeConnectedProfile)
-  const { data, error, isLoading, refetch } = useSpotifyProfile()
+  const { data, error, isLoading, refetch } = useGoogleProfile()
 
   async function handleDisconnect() {
     try {
       setLoading(true)
-      await axios.post('/api/spotify/disconnect')
+      await axios.post('/api/youtube/disconnect')
       await refetch()
-      removeProfile('Spotify')
       setAlertOpen(false)
-      toast.success('Disconnected from Spotify')
+      toast.success(`Disconnected from ${provider}`)
     } catch (err) {
-      console.log('[SPOTIFY_DISCONNECT_ERR]', err)
+      console.log('[YT_MUSIC_DISCONNECT_ERR]', err)
     } finally {
       setLoading(false)
     }
@@ -87,14 +86,14 @@ export function SpotifyProviderCard() {
       <Card>
         <CardHeader>
           <span className="flex items-center">
-            <SpotifyIcon className="mr-2 h-5 w-5" />
-            <CardTitle>Spotify</CardTitle>
+            <YTMusicIcon className="mr-2 h-5 w-5" />
+            <CardTitle>{provider}</CardTitle>
           </span>
-          <CardDescription>Connect your Spotify account</CardDescription>
+          <CardDescription>Connect your {provider} account</CardDescription>
         </CardHeader>
         <CardContent>
           <Button asChild>
-            <Link href="/api/spotify/connect">Connect</Link>
+            <Link href="/api/youtube/connect">Connect</Link>
           </Button>
         </CardContent>
       </Card>
@@ -111,7 +110,7 @@ export function SpotifyProviderCard() {
             setAlertOpen(opened)
           }
         }}
-        description="You are about to disconnect your Spotify account"
+        description={`You are about to disconnect your ${provider} account`}
         action={() => {
           void handleDisconnect()
         }}
@@ -120,8 +119,8 @@ export function SpotifyProviderCard() {
       <Card>
         <CardHeader>
           <span className="flex items-center">
-            <SpotifyIcon className="mr-2 h-5 w-5" />
-            <CardTitle>Spotify</CardTitle>
+            <YTMusicIcon className="mr-2 h-5 w-5" />
+            <CardTitle>{provider}</CardTitle>
           </span>
           <div>
             <Badge variant="outline">Connected</Badge>
@@ -129,13 +128,13 @@ export function SpotifyProviderCard() {
         </CardHeader>
         <CardContent className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage alt="user avatar" src={data.images[0].url ?? ''} />
+            <AvatarImage alt="user avatar" src={data.picture ?? ''} />
             <AvatarFallback asChild>
               <ImgPlaceholder />
             </AvatarFallback>
           </Avatar>
           <span className="flex flex-col items-start">
-            <span className="text-sm font-semibold">{data.display_name}</span>
+            <span className="text-sm font-semibold">{data.name}</span>
             <Button
               variant="link"
               className="text-xs"

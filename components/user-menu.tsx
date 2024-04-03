@@ -6,8 +6,6 @@ import axios from 'axios'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 
-import { useStore } from '@/lib/store'
-
 import { AlertConfirm } from './alert-confirm'
 import { ImgPlaceholder } from './img-placeholder'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
@@ -24,16 +22,13 @@ import {
 export function UserMenu({ session }: { session: Session }) {
   const { user } = session
   const [loading, setLoading] = useState(false)
-  const spotifySdk = useStore((state) => state.spotifySdk)
-  const removeSpotifyUser = useStore((state) => state.removeSpotifyUser)
   const [alertOpen, setAlertOpen] = useState(false)
 
   async function handleLogout() {
     try {
       setLoading(true)
-      spotifySdk?.logOut()
-      removeSpotifyUser()
       await axios.post('/api/spotify/disconnect')
+      await axios.post('/api/youtube/disconnect')
       await signOut({ callbackUrl: '/login' })
     } catch (err) {
       setLoading(false)
@@ -54,8 +49,8 @@ export function UserMenu({ session }: { session: Session }) {
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" variant="unstyledWithHover">
-            <Avatar className="h-8 w-8 rounded-md">
+          <Button type="button" variant="unstyledWithHover" className="rounded-full">
+            <Avatar className="h-8 w-8">
               <AvatarImage alt="user avatar" src={user?.image ?? ''} />
               <AvatarFallback asChild>
                 <ImgPlaceholder />

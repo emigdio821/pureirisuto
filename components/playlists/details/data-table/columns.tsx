@@ -1,17 +1,22 @@
 'use client'
 
 import { Fragment } from 'react'
-import type { PlaylistedTrack, Track } from '@spotify/web-api-ts-sdk'
 import type { ColumnDef } from '@tanstack/react-table'
+import { MinusIcon } from 'lucide-react'
 
-import { msToTime } from '@/lib/utils'
+import {
+  generateArtistExternalOpen,
+  generateTrackExternalOpen,
+  msToTime,
+} from '@/lib/utils'
+import type { TrackItem } from '@/hooks/use-playlist-details'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 
 import { Actions } from './actions'
 import { ProviderTableHeader } from './provider-table-header'
 
-export const columns: Array<ColumnDef<PlaylistedTrack<Track>>> = [
+export const columns: Array<ColumnDef<TrackItem>> = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -42,22 +47,21 @@ export const columns: Array<ColumnDef<PlaylistedTrack<Track>>> = [
     header: 'Title',
     accessorKey: 'title',
     filterFn: (row, _, value: string) => {
-      const name = row.original.track.name
+      const name = row.original.name
       return name.toLowerCase().includes(value.toLowerCase())
     },
-    cell: ({ row }) => {
-      const track = row.original.track
-
-      return (
-        <span className="block max-w-sm">
-          <Button asChild variant="link" className="whitespace-normal text-foreground">
-            <a href={`https://open.spotify.com/track/${track.id}`} target="_blank">
-              {track.name}
-            </a>
-          </Button>
-        </span>
-      )
-    },
+    cell: ({ row }) => (
+      <span className="block min-w-[200px] max-w-sm">
+        <Button asChild variant="link" className="whitespace-normal text-foreground">
+          <a
+            target="_blank"
+            href={generateTrackExternalOpen(row.original.id, row.original.provider)}
+          >
+            {row.original.name}
+          </a>
+        </Button>
+      </span>
+    ),
   },
   {
     header: 'Provider',
@@ -68,8 +72,8 @@ export const columns: Array<ColumnDef<PlaylistedTrack<Track>>> = [
   {
     header: 'Artist',
     cell: ({ row }) => {
-      const trackName = row.original.track.name
-      const artists = row.original.track.artists
+      const trackName = row.original.name
+      const artists = row.original.artists
 
       return (
         <>
@@ -81,7 +85,10 @@ export const columns: Array<ColumnDef<PlaylistedTrack<Track>>> = [
                 className="text-foreground"
                 key={`${trackName}-${artist.id}`}
               >
-                <a href={`https://open.spotify.com/artist/${artist.id}`} target="_blank">
+                <a
+                  target="_blank"
+                  href={generateArtistExternalOpen(artist.id, row.original.provider)}
+                >
                   {artist.name}
                 </a>
               </Button>
@@ -97,22 +104,31 @@ export const columns: Array<ColumnDef<PlaylistedTrack<Track>>> = [
   {
     header: 'Album',
     cell: ({ row }) => {
-      const album = row.original.track.album
+      const album = row.original.album
 
       return (
-        <Button variant="link" className="text-foreground" asChild>
-          <a href={`https://open.spotify.com/album/${album.id}`} target="_blank">
-            {album.name}
-          </a>
-        </Button>
+        <>
+          {album ? (
+            <Button variant="link" className="text-foreground" asChild>
+              <a href={`https://open.spotify.com/album/${album.id}`} target="_blank">
+                {album.name}
+              </a>
+            </Button>
+          ) : (
+            <MinusIcon className="size-4" />
+          )}
+        </>
       )
     },
   },
   {
     header: 'Duration',
-    cell: ({ row }) => {
-      return msToTime(row.original.track.duration_ms)
-    },
+    cell: ({ row }) =>
+      row.original.durationMs ? (
+        msToTime(row.original.durationMs)
+      ) : (
+        <MinusIcon className="size-4" />
+      ),
   },
   {
     id: 'actions',

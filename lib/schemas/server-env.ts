@@ -11,6 +11,9 @@ const envSchema = z.object({
   SPOTIFY_CLIENT_SECRET: requiredEnv,
   SPOTIFY_REFRESH_TOKEN: requiredEnv,
   API_URL: requiredEnv,
+  YT_API_KEY: requiredEnv,
+  YT_CLIENT_ID: requiredEnv,
+  YT_CLIENT_SECRET: requiredEnv,
 })
 
 export const envServerSchema = envSchema.parse(process.env)

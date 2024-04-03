@@ -10,4 +10,5 @@ const envSchema = z.object({
 export const envClientSchema = envSchema.parse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   NEXT_PUBLIC_SPOTIFY_CLIENT_ID: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
+  NEXT_PUBLIC_YT_API_KEY: process.env.NEXT_PUBLIC_YT_API_KEY,
 })

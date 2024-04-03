@@ -2,13 +2,13 @@
 
 import { AppleMusicProviderCard } from './apple-music'
 import { SpotifyProviderCard } from './spotify'
-import { YTMusicProviderCard } from './yt-music'
+import { YouTubeProviderCard } from './youtube'
 
 export function MusicProviderCards() {
   return (
     <>
       <SpotifyProviderCard />
-      <YTMusicProviderCard />
+      <YouTubeProviderCard />
       <AppleMusicProviderCard />
     </>
   )

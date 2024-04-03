@@ -1,14 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { decode } from 'html-entities'
-import { ChevronLeftIcon, ListXIcon, RefreshCcwIcon } from 'lucide-react'
+import { ChevronLeftIcon, Edit2Icon, ListXIcon, RefreshCcwIcon } from 'lucide-react'
 
 import { usePlaylistDetails } from '@/hooks/use-playlist-details'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
+import { EditPlaylistDetails } from '@/components/form/edit-playlist-details'
 import { DataTable } from '@/components/playlists/details/data-table'
 import { columns } from '@/components/playlists/details/data-table/columns'
 import { SimpleSkeleton } from '@/components/skeletons'
@@ -18,7 +27,9 @@ interface PlaylistDetailsParams {
 }
 
 export default function SpotifyPlaylistDetails({ params }: PlaylistDetailsParams) {
-  const { data, isLoading, refetch } = usePlaylistDetails(params.id)
+  const [loading, setLoading] = useState(false)
+  const [editDetails, setEditDetails] = useState(false)
+  const { data, isLoading, refetch } = usePlaylistDetails(params.id, 'Spotify')
 
   if (isLoading) {
     return <SimpleSkeleton msg="Loading playlist" />
@@ -35,9 +46,41 @@ export default function SpotifyPlaylistDetails({ params }: PlaylistDetailsParams
       <h3 className="text-2xl font-bold tracking-tight">Playlist details</h3>
       {data ? (
         <>
+          <Dialog
+            open={editDetails}
+            onOpenChange={(opened) => {
+              if (!loading) {
+                setEditDetails(opened)
+              }
+            }}
+          >
+            <DialogContent className="max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Edit playlist</DialogTitle>
+                <DialogDescription>Update playlist details</DialogDescription>
+              </DialogHeader>
+              <EditPlaylistDetails
+                playlist={{
+                  id: data.id,
+                  coverUrl: data.coverUrl,
+                  description: data.description ?? '',
+                  title: data.name,
+                  provider: 'Spotify',
+                  isPublic: data.isPublic,
+                  totalTracks: data.tracks.length,
+                  owner: data.owner,
+                }}
+                setLoading={setLoading}
+                closeDialog={() => {
+                  setEditDetails(false)
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+
           <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
             <Avatar className="h-36 w-36 rounded-md sm:h-48 sm:w-48">
-              <AvatarImage alt={`${data.name} playlist image`} src={data.images[0].url} />
+              <AvatarImage alt={`${data.name} playlist image`} src={data.coverUrl} />
               <AvatarFallback className="rounded-md" />
             </Avatar>
             <div className="flex flex-col">
@@ -53,31 +96,42 @@ export default function SpotifyPlaylistDetails({ params }: PlaylistDetailsParams
                     href={`https://open.spotify.com/user/${data.owner.id}`}
                     target="_blank"
                   >
-                    {data.owner.display_name}
+                    {data.owner.name}
                   </a>
                 </Button>
               </span>
+
               <span className="flex items-center gap-2 text-sm">
-                {data.public ? 'Public' : 'Private'} playlist{' '}
-                <Separator orientation="vertical" className="h-4" /> {data.tracks.total}{' '}
-                tracks <Separator orientation="vertical" className="h-4" />{' '}
-                {data.followers.total}{' '}
-                {data.followers.total > 1 ? 'followers' : 'follower'}
+                {data.isPublic ? 'Public' : 'Private'} playlist{' '}
+                <Separator orientation="vertical" className="h-4" />
+                Tracks: {data.tracks.length}
+                <Separator orientation="vertical" className="h-4" /> Followers:{' '}
+                {data.followers ?? 0}
               </span>
-              <span className="mt-2">
+              <span className="mt-2 flex items-center gap-2">
                 <Button variant="outline" asChild>
                   <a
-                    href={`https://open.spotify.com/playlist/${data.id}`}
                     target="_blank"
+                    href={`https://open.spotify.com/playlist/${data.id}`}
                   >
                     Open on Spotify
                   </a>
                 </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setEditDetails(true)
+                  }}
+                >
+                  <Edit2Icon className="size-4" />
+                </Button>
               </span>
             </div>
           </div>
-          {data.tracks.items.length > 0 ? (
-            <DataTable data={data.tracks.items} columns={columns} />
+          {data.tracks.length > 0 ? (
+            <DataTable data={data.tracks} columns={columns} />
           ) : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center gap-2 p-6">

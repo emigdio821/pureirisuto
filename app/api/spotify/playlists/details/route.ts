@@ -1,27 +1,26 @@
-// import { NextResponse } from 'next/server'
-// import axios from 'axios'
-
 import { NextResponse, type NextRequest } from 'next/server'
-import axios from 'axios'
+import { SpotifyApi } from '@spotify/web-api-ts-sdk'
 
-import type { PlaylistItem } from '@/types/spotify-api'
+import { envServerSchema } from '@/lib/schemas/server-env'
 
 import { getAccessToken } from '../../access-token/route'
 
-const PLAYLIST_EP = 'https://api.spotify.com/v1/playlists'
+const { SPOTIFY_CLIENT_ID } = envServerSchema
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id')
 
   try {
-    const { access_token: AT } = await getAccessToken()
-    const { data } = await axios.get<PlaylistItem>(`${PLAYLIST_EP}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${AT}`,
-      },
-    })
+    const accessToken = await getAccessToken()
+    if (!accessToken) throw new Error('No access token')
+    if (!id) throw new Error('Missing playlist id')
+    const sdk = SpotifyApi.withAccessToken(SPOTIFY_CLIENT_ID, accessToken)
+    const data = await sdk.playlists.getPlaylist(id)
+
     return NextResponse.json(data)
   } catch (err) {
+    console.log('[PLAYLIST_DETAILS_ERR]', err)
+
     return new Response(null, {
       status: 204,
     })

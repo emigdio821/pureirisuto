@@ -9,7 +9,7 @@ export function ProviderBadge({ provider }: { provider: MusicProvider }) {
     <Badge variant="outline">
       <span
         className={cn('text-center', {
-          'text-[#ff0000]': provider === 'YouTube Music',
+          'text-[#ff0000]': provider === 'YouTube',
           'text-[#1db954]': provider === 'Spotify',
           'text-[#f94c57]': provider === 'Apple Music',
         })}

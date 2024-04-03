@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useParams } from 'next/navigation'
-import type { PlaylistedTrack, Track } from '@spotify/web-api-ts-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import type { Row } from '@tanstack/react-table'
 import { MoreHorizontalIcon } from 'lucide-react'
@@ -8,7 +7,7 @@ import { toast } from 'sonner'
 
 import { useStore } from '@/lib/store'
 import { generateTrackExternalOpen } from '@/lib/utils'
-import type { PlaylistDetails } from '@/hooks/use-playlist-details'
+import type { PlaylistDetails, TrackItem } from '@/hooks/use-playlist-details'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -19,11 +18,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { AlertConfirm } from '@/components/alert-confirm'
 
-export function Actions({ row }: { row: Row<PlaylistedTrack<Track>> }) {
+export function Actions({ row }: { row: Row<TrackItem> }) {
   const [alertOpen, setAlertOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const spotifySdk = useStore((state) => state.spotifySdk)
-  const spotifyUser = useStore((state) => state.spotifyUser)
+  const profiles = useStore((state) => state.connectedProfiles)
   const queryClient = useQueryClient()
   const params = useParams<{ id: string }>()
   const playlist = queryClient.getQueryData([
@@ -33,20 +31,20 @@ export function Actions({ row }: { row: Row<PlaylistedTrack<Track>> }) {
   const provider = playlist?.provider
 
   async function handleDeleteTrack() {
-    const payload = {
-      tracks: [
-        {
-          uri: row.original.track.uri,
-        },
-      ],
-    }
+    // const payload = {
+    //   tracks: [
+    //     {
+    //       uri: row.original.track.uri,
+    //     },
+    //   ],
+    // }
 
     if (playlist) {
       setLoading(true)
       try {
-        await spotifySdk?.playlists.removeItemsFromPlaylist(playlist.id, payload)
+        // await spotifySdk?.playlists.removeItemsFromPlaylist(playlist.id, payload)
         await queryClient.invalidateQueries({ queryKey: ['playlist-details', params.id] })
-        toast.success(`Track "${row.original.track.name}" deleted`)
+        toast.success(`Track "${row.original.name}" deleted`)
       } catch (err) {
         console.log('[DELETE_TRACK_PLAYLIST_DETAILS]', err)
         toast.error('We could not delete this track, try again')
@@ -66,7 +64,7 @@ export function Actions({ row }: { row: Row<PlaylistedTrack<Track>> }) {
           <span className="flex flex-col">
             <span>
               <span>
-                Track: <span className="font-semibold">{row.original.track.name}</span>
+                Track: <span className="font-semibold">{row.original.name}</span>
               </span>
             </span>
             <span>This action cannot be undone</span>
@@ -88,7 +86,7 @@ export function Actions({ row }: { row: Row<PlaylistedTrack<Track>> }) {
             {provider && (
               <a
                 target="_blank"
-                href={generateTrackExternalOpen(row.original.track.id, provider)}
+                href={generateTrackExternalOpen(row.original.id, provider)}
               >
                 <span>
                   Open on <span className="font-semibold">{provider}</span>
@@ -97,7 +95,7 @@ export function Actions({ row }: { row: Row<PlaylistedTrack<Track>> }) {
             )}
           </DropdownMenuItem>
           <DropdownMenuItem>Add to playlist</DropdownMenuItem>
-          {spotifyUser?.id === playlist?.owner.id && (
+          {profiles.spotify?.id === playlist?.owner.id && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem

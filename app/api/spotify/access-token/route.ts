@@ -8,7 +8,9 @@ import { envServerSchema } from '@/lib/schemas/server-env'
 export const revalidate = 0
 
 const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, API_URL } = envServerSchema
-const basic = Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')
+const basic = Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString(
+  'base64',
+)
 const TOKEN_EP = 'https://accounts.spotify.com/api/token'
 
 export async function getAccessToken(cbCode?: string) {
@@ -100,6 +102,12 @@ function handleCookies(data: AccessToken) {
 
 export async function GET() {
   const data = await getAccessToken()
+
+  return NextResponse.json(data)
+}
+
+export async function POST() {
+  const { data } = await refreshAccessToken()
 
   return NextResponse.json(data)
 }

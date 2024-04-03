@@ -10,15 +10,13 @@ import { AlertConfirm } from '@/components/alert-confirm'
 
 export function ProfileCardContent() {
   const [loading, setLoading] = useState(false)
-  const spotifySdk = useStore((state) => state.spotifySdk)
-  const removeSpotifyUser = useStore((state) => state.removeSpotifyUser)
+  const removeProfiles = useStore((state) => state.removeConnectedProfiles)
   const [alertOpen, setAlertOpen] = useState(false)
 
   async function handleLogout() {
     try {
       setLoading(true)
-      spotifySdk?.logOut()
-      removeSpotifyUser()
+      removeProfiles()
       await axios.post('/api/spotify/disconnect')
       await signOut({ callbackUrl: '/login' })
     } catch (err) {

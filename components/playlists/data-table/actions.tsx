@@ -28,7 +28,20 @@ export function Actions({ row }: { row: Row<PlaylistItem> }) {
   const provider = row.original.provider
   const [editDetails, setEditDetails] = useState(false)
   const [loading, setLoading] = useState(false)
-  const spotifyUser = useStore((state) => state.spotifyUser)
+  const profiles = useStore((state) => state.connectedProfiles)
+
+  function canEditDetails() {
+    switch (provider) {
+      case 'Spotify':
+        return profiles.spotify?.id === row.original.owner.id
+      case 'YouTube':
+        return true
+      case 'Apple Music':
+        return false
+      default:
+        return false
+    }
+  }
 
   return (
     <>
@@ -73,7 +86,7 @@ export function Actions({ row }: { row: Row<PlaylistItem> }) {
               </span>
             </a>
           </DropdownMenuItem>
-          {spotifyUser?.id === row.original.owner.id && (
+          {canEditDetails() && (
             <DropdownMenuItem
               onClick={() => {
                 setEditDetails(true)

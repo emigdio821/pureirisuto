@@ -93,8 +93,8 @@ export function generatePlaylistDetailsUrl(id: string, provider: MusicProvider) 
   switch (provider) {
     case 'Spotify':
       return `/playlists/spotify/${id}`
-    case 'YouTube Music':
-      return `/playlists/yt-music/${id}`
+    case 'YouTube':
+      return `/playlists/youtube/${id}`
     case 'Apple Music':
       return `/playlists/apple-music/${id}`
   }
@@ -104,8 +104,8 @@ export function generatePlaylistExternalOpen(id: string, provider: MusicProvider
   switch (provider) {
     case 'Spotify':
       return `https://open.spotify.com/playlist/${id}`
-    case 'YouTube Music':
-      return `https://music.youtube.com/watch?v=${id}`
+    case 'YouTube':
+      return `https://music.youtube.com/playlist?list=${id}`
     case 'Apple Music':
       return `https://music.apple.com/playlist/${id}`
   }
@@ -115,7 +115,7 @@ export function generateTrackExternalOpen(id: string, provider: MusicProvider) {
   switch (provider) {
     case 'Spotify':
       return `https://open.spotify.com/track/${id}`
-    case 'YouTube Music':
+    case 'YouTube':
       return `https://music.youtube.com/watch?v=${id}`
     case 'Apple Music':
       return `https://music.apple.com/song/${id}`
@@ -126,7 +126,18 @@ export function generateOwnerExternalOpen(id: string, provider: MusicProvider) {
   switch (provider) {
     case 'Spotify':
       return `https://open.spotify.com/user/${id}`
-    case 'YouTube Music':
+    case 'YouTube':
+      return `https://music.youtube.com/channel/${id}`
+    case 'Apple Music':
+      return `https://music.apple.com/curator/${id}`
+  }
+}
+
+export function generateArtistExternalOpen(id: string, provider: MusicProvider) {
+  switch (provider) {
+    case 'Spotify':
+      return `https://open.spotify.com/artist/${id}`
+    case 'YouTube':
       return `https://music.youtube.com/channel/${id}`
     case 'Apple Music':
       return `https://music.apple.com/curator/${id}`

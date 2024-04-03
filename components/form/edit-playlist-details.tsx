@@ -40,9 +40,9 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
   const form = useForm<z.infer<typeof editPlaylistSchema>>({
     resolver: zodResolver(editPlaylistSchema),
     defaultValues: {
-      title: playlist.name,
+      title: playlist.title,
       description: decodedDescription,
-      isPublic: playlist.public,
+      isPublic: playlist.isPublic,
       cover: '',
     },
   })
@@ -115,7 +115,7 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
             fileInputRef.current?.click()
           }}
         >
-          <AvatarImage alt="Playlist image" src={playlist.images[0].url} />
+          <AvatarImage alt="Playlist image" src={playlist.coverUrl} />
           <AvatarFallback className="rounded-md" />
         </Avatar>
       </div>
@@ -151,7 +151,7 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder={playlist.name} {...field} />
+                <Input placeholder={playlist.title} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

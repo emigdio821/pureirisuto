@@ -42,19 +42,23 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
   {
     header: 'Title',
     accessorKey: 'name',
-    // filterFn: (row, _, value: string) => {
-    //   const name = row.original.name
-    //   return name.toLowerCase().includes(value.toLowerCase())
-    // },
-    cell: ({ row }) => (
-      <span className="block min-w-[200px] max-w-sm">
-        <Button asChild variant="link" className="whitespace-normal text-foreground">
-          <Link href={generatePlaylistDetailsUrl(row.original.id, row.original.provider)}>
-            {row.original.name}
-          </Link>
-        </Button>
-      </span>
-    ),
+    filterFn: (row, _, value: string) => {
+      const name = row.original.title
+      return name.toLowerCase().includes(value.toLowerCase())
+    },
+    cell: ({ row }) => {
+      return (
+        <span className="block min-w-[200px] max-w-sm">
+          <Button asChild variant="link" className="whitespace-normal text-foreground">
+            <Link
+              href={generatePlaylistDetailsUrl(row.original.id, row.original.provider)}
+            >
+              {row.original.title}
+            </Link>
+          </Button>
+        </span>
+      )
+    },
   },
   {
     header: 'Provider',
@@ -71,20 +75,22 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
   {
     header: 'Tracks',
     cell: ({ row }) => {
-      return row.original.tracks?.total ?? 0
+      return row.original.totalTracks
     },
   },
   {
     header: 'Owner',
     cell: ({ row }) => {
-      const owner = row.original.owner
+      const ownerId = row.original.owner.id
+      const ownerName = row.original.owner.name
+
       return (
         <Button variant="link" className="text-foreground" asChild>
           <a
             target="_blank"
-            href={generateOwnerExternalOpen(owner.id, row.original.provider)}
+            href={generateOwnerExternalOpen(ownerId, row.original.provider)}
           >
-            {owner.display_name}
+            {ownerName}
           </a>
         </Button>
       )
@@ -93,7 +99,9 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
   {
     header: 'Type',
     cell: ({ row }) => {
-      return <Badge variant="outline">{row.original.public ? 'Public' : 'Private'}</Badge>
+      return (
+        <Badge variant="outline">{row.original.isPublic ? 'Public' : 'Private'}</Badge>
+      )
     },
   },
   {

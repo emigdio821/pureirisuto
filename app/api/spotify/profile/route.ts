@@ -1,22 +1,20 @@
 import { NextResponse } from 'next/server'
-import axios from 'axios'
+import { SpotifyApi } from '@spotify/web-api-ts-sdk'
 
-import type { SpotifyMeResponse } from '@/types/spotify-api'
+import { envServerSchema } from '@/lib/schemas/server-env'
 
 import { getAccessToken } from '../access-token/route'
 
-const ME_EP = 'https://api.spotify.com/v1/me'
+const { SPOTIFY_CLIENT_ID } = envServerSchema
 
 export async function GET() {
   try {
-    const atData = await getAccessToken()
-    const { data } = await axios.get<SpotifyMeResponse>(ME_EP, {
-      headers: {
-        Authorization: `Bearer ${atData?.access_token}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    })
-    return NextResponse.json(data)
+    const accessToken = await getAccessToken()
+    if (!accessToken) throw new Error('No access token')
+    const sdk = SpotifyApi.withAccessToken(SPOTIFY_CLIENT_ID, accessToken)
+    const profile = await sdk.currentUser.profile()
+
+    return NextResponse.json(profile)
   } catch (err) {
     return new Response(null, {
       status: 204,

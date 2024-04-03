@@ -1,15 +1,14 @@
 import type { UserProfile } from '@spotify/web-api-ts-sdk'
 import { useQuery } from '@tanstack/react-query'
-
-import { useStore } from '@/lib/store'
+import axios from 'axios'
 
 export function useSpotifyProfile() {
-  const spotifySdk = useStore((state) => state.spotifySdk)
-
   async function getSpotifyProfile() {
     let profile: UserProfile | null = null
+
     try {
-      profile = (await spotifySdk?.currentUser.profile()) ?? null
+      const { data } = await axios.get<UserProfile | null>('/api/spotify/profile')
+      profile = data
     } catch (err) {
       let errorMsg = 'Something went wrong while fetching Spotify profile'
       if (err instanceof Error) {
