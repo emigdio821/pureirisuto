@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Link from 'next/link'
 import axios from 'axios'
 import { CircleAlertIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -18,7 +17,7 @@ import {
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertConfirm } from '@/components/alert-confirm'
-import { SpotifyIcon } from '@/components/icons'
+import { Spinner, SpotifyIcon } from '@/components/icons'
 import { ImgPlaceholder } from '@/components/img-placeholder'
 
 export function SpotifyProviderCard() {
@@ -26,6 +25,13 @@ export function SpotifyProviderCard() {
   const [alertOpen, setAlertOpen] = useState(false)
   const removeProfile = useStore((state) => state.removeConnectedProfile)
   const { data, error, isLoading, refetch } = useSpotifyProfile()
+
+  async function handleConenct() {
+    setLoading(true)
+    const { data } = await axios.get<{ url: string }>('/api/spotify/connect')
+
+    window.location.assign(data.url)
+  }
 
   async function handleDisconnect() {
     try {
@@ -93,8 +99,15 @@ export function SpotifyProviderCard() {
           <CardDescription>Connect your Spotify account</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild>
-            <Link href="/api/spotify/connect">Connect</Link>
+          <Button
+            type="button"
+            disabled={loading}
+            onClick={() => {
+              void handleConenct()
+            }}
+          >
+            Connect
+            {loading && <Spinner className="ml-2" barsClassName="bg-background" />}
           </Button>
         </CardContent>
       </Card>

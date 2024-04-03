@@ -25,5 +25,5 @@ export async function GET() {
     include_granted_scopes: true,
   })
 
-  return NextResponse.redirect(new URL(url))
+  return NextResponse.json({ url })
 }

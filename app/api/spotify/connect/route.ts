@@ -33,5 +33,5 @@ const queryParamString = new URLSearchParams(params).toString()
 const AUTH_URL = `https://accounts.spotify.com/authorize?${queryParamString}`
 
 export async function GET() {
-  return NextResponse.redirect(new URL(AUTH_URL))
+  return NextResponse.json({ url: AUTH_URL })
 }

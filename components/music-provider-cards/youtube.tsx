@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Link from 'next/link'
 import axios from 'axios'
 import { CircleAlertIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -17,7 +16,7 @@ import {
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertConfirm } from '@/components/alert-confirm'
-import { YTMusicIcon } from '@/components/icons'
+import { Spinner, YTMusicIcon } from '@/components/icons'
 import { ImgPlaceholder } from '@/components/img-placeholder'
 
 const provider = 'YouTube'
@@ -26,6 +25,13 @@ export function YouTubeProviderCard() {
   const [loading, setLoading] = useState(false)
   const [alertOpen, setAlertOpen] = useState(false)
   const { data, error, isLoading, refetch } = useGoogleProfile()
+
+  async function handleConenct() {
+    setLoading(true)
+    const { data } = await axios.get<{ url: string }>('/api/youtube/connect')
+
+    window.location.assign(data.url)
+  }
 
   async function handleDisconnect() {
     try {
@@ -92,8 +98,15 @@ export function YouTubeProviderCard() {
           <CardDescription>Connect your {provider} account</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild>
-            <Link href="/api/youtube/connect">Connect</Link>
+          <Button
+            type="button"
+            disabled={loading}
+            onClick={() => {
+              void handleConenct()
+            }}
+          >
+            Connect
+            {loading && <Spinner className="ml-2" barsClassName="bg-background" />}
           </Button>
         </CardContent>
       </Card>
