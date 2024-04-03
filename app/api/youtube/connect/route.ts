@@ -20,6 +20,7 @@ export async function GET() {
 
   const url = oauth2Client.generateAuthUrl({
     scope: scopes,
+    prompt: 'consent',
     access_type: 'offline',
     include_granted_scopes: true,
   })

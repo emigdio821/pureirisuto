@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import type { Row } from '@tanstack/react-table'
+import axios from 'axios'
 import { MoreHorizontalIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -30,19 +31,40 @@ export function Actions({ row }: { row: Row<TrackItem> }) {
   ]) as PlaylistDetails
   const provider = playlist?.provider
 
-  async function handleDeleteTrack() {
-    // const payload = {
-    //   tracks: [
-    //     {
-    //       uri: row.original.track.uri,
-    //     },
-    //   ],
-    // }
+  function canDeleteTracks() {
+    switch (provider) {
+      case 'Spotify':
+        return profiles.spotify?.id === playlist?.owner.id
+      case 'YouTube':
+        return true
+      case 'Apple Music':
+        return false
+      default:
+        return false
+    }
+  }
 
-    if (playlist) {
+  function getDeleteParams() {
+    switch (provider) {
+      case 'Spotify':
+        return {
+          id: playlist?.id,
+          uris: [row.original.uri],
+        }
+      case 'YouTube':
+        return {
+          uris: [row.original.id],
+        }
+    }
+  }
+
+  async function handleDeleteTrack() {
+    if (playlist && provider) {
       setLoading(true)
       try {
-        // await spotifySdk?.playlists.removeItemsFromPlaylist(playlist.id, payload)
+        await axios.delete(`/api/${provider.toLocaleLowerCase()}/playlists`, {
+          params: getDeleteParams(),
+        })
         await queryClient.invalidateQueries({ queryKey: ['playlist-details', params.id] })
         toast.success(`Track "${row.original.name}" deleted`)
       } catch (err) {
@@ -50,6 +72,7 @@ export function Actions({ row }: { row: Row<TrackItem> }) {
         toast.error('We could not delete this track, try again')
       } finally {
         setLoading(false)
+        setAlertOpen(false)
       }
     }
   }
@@ -95,7 +118,7 @@ export function Actions({ row }: { row: Row<TrackItem> }) {
             )}
           </DropdownMenuItem>
           <DropdownMenuItem>Add to playlist</DropdownMenuItem>
-          {profiles.spotify?.id === playlist?.owner.id && (
+          {canDeleteTracks() && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem

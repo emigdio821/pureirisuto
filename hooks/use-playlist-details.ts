@@ -24,6 +24,7 @@ export interface TrackItem {
   explicit?: boolean
   provider: MusicProvider
   album?: AlbumOrArtist
+  uri?: string
 }
 
 export interface PlaylistDetailsItem {
@@ -79,6 +80,7 @@ export function usePlaylistDetails(id: string, provider: MusicProvider) {
             id: track.album.id,
             name: track.album.name,
           },
+          uri: track.uri,
         })),
       }
     }
@@ -109,7 +111,7 @@ export function usePlaylistDetails(id: string, provider: MusicProvider) {
         isPublic: data.isPublic,
         tracks:
           data.tracks.items?.map((track) => ({
-            id: track.snippet?.resourceId?.videoId ?? '',
+            id: track.id ?? '',
             name: track.snippet?.title ?? '',
             provider: 'YouTube',
             artists: [
@@ -139,8 +141,6 @@ export function usePlaylistDetails(id: string, provider: MusicProvider) {
           break
         }
       }
-
-      console.log(details)
     } catch (err) {
       let errorMsg = 'Something went wrong while fetching Playlist'
       if (err instanceof Error) {

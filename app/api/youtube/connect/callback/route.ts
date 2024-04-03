@@ -5,8 +5,9 @@ import { exchangeCode } from '../../access-token/route'
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code') ?? ''
-  await exchangeCode(code)
   cookies().set('youtube.code', code, { path: '/', httpOnly: true })
+
+  await exchangeCode()
 
   return NextResponse.redirect(new URL('/', req.url))
 }
