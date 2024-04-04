@@ -18,8 +18,8 @@ export function MobileSidebar() {
           {NAV_OPTS.map((option) => {
             let isActive
 
-            if (option.href === '/') {
-              isActive = pathname === '/'
+            if (option.href === '/app') {
+              isActive = pathname === '/app'
             } else {
               isActive = pathname.startsWith(option.href)
             }

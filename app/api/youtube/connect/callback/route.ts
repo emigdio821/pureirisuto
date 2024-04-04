@@ -5,5 +5,5 @@ export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code') ?? ''
   cookies().set('youtube.code', code, { path: '/', httpOnly: true })
 
-  return NextResponse.redirect(new URL('/', req.url))
+  return NextResponse.redirect(new URL('/app', req.url))
 }

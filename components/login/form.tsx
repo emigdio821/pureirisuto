@@ -22,7 +22,7 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     try {
       await signIn('credentials', {
-        callbackUrl: '/',
+        callbackUrl: '/app',
         username: values.username,
         password: values.password,
       })

@@ -4,7 +4,7 @@ export const siteConfig = {
   ogImage: 'tbd',
   description: 'Simple playlist manager. Migrate playlists from X service to Y service.',
   links: {
-    github: 'tdb',
+    github: 'https://github.com/emigdio821/pureirisuto',
   },
   icons: {
     icon: ['/images/favicon.ico'],

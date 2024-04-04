@@ -1,14 +1,14 @@
 export const NAV_OPTS = [
   {
     title: 'Dashboard',
-    href: '/',
+    href: '/app',
   },
   {
     title: 'Playlists',
-    href: '/playlists',
+    href: '/app/playlists',
   },
   {
     title: 'Transfer',
-    href: '/transfer',
+    href: '/app/transfer',
   },
 ]

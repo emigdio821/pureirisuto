@@ -9,7 +9,6 @@ const envSchema = z.object({
   NEXTAUTH_SECRET: requiredEnv,
   SPOTIFY_CLIENT_ID: requiredEnv,
   SPOTIFY_CLIENT_SECRET: requiredEnv,
-  SPOTIFY_REFRESH_TOKEN: requiredEnv,
   API_URL: requiredEnv,
   YT_API_KEY: requiredEnv,
   YT_CLIENT_ID: requiredEnv,

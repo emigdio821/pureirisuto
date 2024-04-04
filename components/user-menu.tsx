@@ -29,7 +29,7 @@ export function UserMenu({ session }: { session: Session }) {
       setLoading(true)
       await axios.post('/api/spotify/disconnect')
       await axios.post('/api/youtube/disconnect')
-      await signOut({ callbackUrl: '/login' })
+      await signOut({ callbackUrl: '/' })
     } catch (err) {
       setLoading(false)
       console.log('[LOGOUT_ERR]', err)
