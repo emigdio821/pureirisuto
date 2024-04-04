@@ -1,5 +1,7 @@
 import { useRef } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
 import { decode } from 'html-entities'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -34,6 +36,7 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
   const { playlist, closeDialog, setLoading } = props
   const decodedDescription = decode(playlist.description)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const queryClient = useQueryClient()
 
   const form = useForm<z.infer<typeof editPlaylistSchema>>({
     resolver: zodResolver(editPlaylistSchema),
@@ -71,27 +74,15 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
     })
   }
 
-  async function updateSpotifyPLaylist(values: z.infer<typeof editPlaylistSchema>) {
-    console.log('edit values', values)
-    // await spotifySdk?.playlists.changePlaylistDetails(playlist.id, {
-    //   name: values.title,
-    //   description: values.description,
-    //   public: values.isPublic,
-    // })
-    // if (values.cover) {
-    //   await spotifySdk?.playlists.addCustomPlaylistCoverImageFromBase64String(
-    //     playlist.id,
-    //     values.cover,
-    //   )
-    // }
-  }
-
   async function onSubmit(values: z.infer<typeof editPlaylistSchema>) {
     setLoading(true)
     try {
-      if (playlist.provider === 'Spotify') {
-        await updateSpotifyPLaylist(values)
-      }
+      await axios.post(`/api/${playlist.provider.toLocaleLowerCase()}/playlists`, {
+        ...values,
+        playlistId: playlist.id,
+      })
+      await queryClient.invalidateQueries({ queryKey: ['user-playlists'] })
+      await queryClient.invalidateQueries({ queryKey: ['playlist-details', playlist.id] })
       closeDialog()
       toast.success('Playlist updated', {
         description: 'Updated details may take some time to get reflected',

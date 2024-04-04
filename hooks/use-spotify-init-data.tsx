@@ -3,15 +3,21 @@ import type { AccessToken } from '@spotify/web-api-ts-sdk'
 import axios from 'axios'
 import { toast } from 'sonner'
 
-import { initSpotify } from '@/lib/spotify'
+import { useStore } from '@/lib/store'
 import { ExpiredToastBody } from '@/components/expired-toast'
 
+import { useSpotifyProfile } from './use-spotify-profile'
+
+const provider = 'Spotify'
 const toastId = 'spotify-expired-toast'
 
 export function useSpotifyInitData() {
   const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useSpotifyProfile()
   const [reconnecting, setReconnecting] = useState(false)
   const [expiredSpotify, setExpiredSpotify] = useState(false)
+  const addProvider = useStore((state) => state.addConnectedProvider)
+  const addProfile = useStore((state) => state.addConnectedProfile)
 
   const getSpotifyToken = useCallback(async () => {
     return await axios.get<AccessToken | null>('/api/spotify/access-token')
@@ -35,7 +41,7 @@ export function useSpotifyInitData() {
     toast(
       <ExpiredToastBody
         id={toastId}
-        provider="Spotify"
+        provider={provider}
         isLoading={reconnecting}
         callback={() => {
           void handleReconnect()
@@ -48,6 +54,13 @@ export function useSpotifyInitData() {
       },
     )
   }, [handleReconnect, reconnecting])
+
+  useEffect(() => {
+    if (data) {
+      addProvider(provider)
+      addProfile(provider, data)
+    }
+  }, [data, addProvider, addProfile])
 
   useEffect(() => {
     if (expiredSpotify) expiredToast()
@@ -63,8 +76,6 @@ export function useSpotifyInitData() {
         setLoading(false)
         return
       }
-
-      await initSpotify()
 
       const expireTime = token.expires
         ? token.expires - Date.now()
@@ -82,7 +93,7 @@ export function useSpotifyInitData() {
     return () => {
       clearTimeout(timeOut)
     }
-  }, [getSpotifyToken])
+  }, [getSpotifyToken, addProvider])
 
-  return { isLoading: loading }
+  return { isLoading: loading || isLoading }
 }

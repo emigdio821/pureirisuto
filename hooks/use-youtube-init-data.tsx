@@ -3,15 +3,21 @@ import type { GoogleCredentials } from '@/types'
 import axios from 'axios'
 import { toast } from 'sonner'
 
-import { initYouTube } from '@/lib/youtube'
+import { useStore } from '@/lib/store'
 import { ExpiredToastBody } from '@/components/expired-toast'
 
+import { useGoogleProfile } from './use-google-profile'
+
+const provider = 'YouTube'
 const toastId = 'youtube-expired-toast'
 
 export function useYoutubeInitData() {
   const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useGoogleProfile()
   const [reconnecting, setReconnecting] = useState(false)
   const [expiredToken, setExpiredToken] = useState(false)
+  const addProvider = useStore((state) => state.addConnectedProvider)
+  const addProfile = useStore((state) => state.addConnectedProfile)
 
   const getToken = useCallback(async () => {
     return await axios.get<GoogleCredentials | null>('/api/youtube/access-token')
@@ -54,17 +60,22 @@ export function useYoutubeInitData() {
   }, [expiredToken, expiredToast])
 
   useEffect(() => {
+    if (data) {
+      addProvider(provider)
+      addProfile(provider, data)
+    }
+  }, [data, addProvider, addProfile])
+
+  useEffect(() => {
     let timeOut: NodeJS.Timeout
 
-    async function getInitialData() {
+    async function handleTokenExpiration() {
       setLoading(true)
       const { data: token } = await getToken()
       if (!token) {
         setLoading(false)
         return
       }
-
-      await initYouTube()
 
       const expireTime = token.expiry_date ? token.expiry_date - Date.now() : null
 
@@ -77,12 +88,12 @@ export function useYoutubeInitData() {
       setLoading(false)
     }
 
-    void getInitialData()
+    void handleTokenExpiration()
 
     return () => {
       clearTimeout(timeOut)
     }
-  }, [getToken])
+  }, [getToken, addProvider])
 
-  return { isLoading: loading }
+  return { isLoading: loading || isLoading }
 }
