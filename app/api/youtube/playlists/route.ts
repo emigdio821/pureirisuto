@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       status: 204,
     })
   } catch (err) {
-    console.log('UPDATE_SPOTIFY_PLAYLIST_ERR', err)
+    console.log('UPDATE_YT_PLAYLIST_ERR', err)
     return new Response(null, {
       status: 204,
     })

@@ -43,7 +43,7 @@ export interface PlaylistDetailsItem {
 export function usePlaylistDetails(id: string, provider: MusicProvider) {
   const handleSpotifyDetails = useCallback(async () => {
     let details: PlaylistDetailsItem | null = null
-    const { data } = await axios.get<Playlist<Track> | null>(
+    const { data: spotifyDetails } = await axios.get<Playlist<Track> | null>(
       `/api/spotify/playlists/details`,
       {
         params: {
@@ -51,21 +51,21 @@ export function usePlaylistDetails(id: string, provider: MusicProvider) {
         },
       },
     )
-    if (data) {
+    if (spotifyDetails) {
       details = {
-        collaborative: data.collaborative,
-        description: data.description,
-        followers: data.followers.total,
-        id: data.id,
-        coverUrl: data.images[0].url,
-        name: data.name,
+        collaborative: spotifyDetails.collaborative,
+        description: spotifyDetails.description,
+        followers: spotifyDetails.followers.total,
+        id: spotifyDetails.id,
+        coverUrl: spotifyDetails.images[0].url,
+        name: spotifyDetails.name,
         owner: {
-          id: data.owner.id,
-          name: data.owner.display_name,
+          id: spotifyDetails.owner.id,
+          name: spotifyDetails.owner.display_name,
         },
-        isPublic: data.public,
+        isPublic: spotifyDetails.public,
         provider: 'Spotify',
-        tracks: data.tracks.items.map(({ track }) => ({
+        tracks: spotifyDetails.tracks.items.map(({ track }) => ({
           id: track.id,
           name: track.name,
           durationMs: track.duration_ms,
@@ -90,7 +90,7 @@ export function usePlaylistDetails(id: string, provider: MusicProvider) {
 
   const handleYTDetails = useCallback(async () => {
     let details: PlaylistDetailsItem | null = null
-    const { data } = await axios.get<YTPlaylistDetails | null>(
+    const { data: ytDetails } = await axios.get<YTPlaylistDetails | null>(
       `/api/youtube/playlists/details`,
       {
         params: {
@@ -98,19 +98,20 @@ export function usePlaylistDetails(id: string, provider: MusicProvider) {
         },
       },
     )
-    if (data) {
+    if (ytDetails) {
       details = {
         id,
-        name: data.name,
-        coverUrl: data.coverUrl,
+        name: ytDetails.name,
+        description: ytDetails.description,
+        coverUrl: ytDetails.coverUrl,
         owner: {
-          id: data.owner.id,
-          name: data.owner.name,
+          id: ytDetails.owner.id,
+          name: ytDetails.owner.name,
         },
         provider: 'YouTube',
-        isPublic: data.isPublic,
+        isPublic: ytDetails.isPublic,
         tracks:
-          data.tracks.items?.map((track) => ({
+          ytDetails.tracks.items?.map((track) => ({
             id: track.id ?? '',
             name: track.snippet?.title ?? '',
             provider: 'YouTube',

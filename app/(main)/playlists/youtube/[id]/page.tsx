@@ -63,7 +63,7 @@ export default function YTMusicPlaylistDetails({ params }: PlaylistDetailsParams
                   coverUrl: data.coverUrl,
                   description: data.description ?? '',
                   title: data.name,
-                  provider: 'Spotify',
+                  provider: 'YouTube',
                   isPublic: data.isPublic,
                   totalTracks: data.tracks.length,
                   owner: data.owner,
