@@ -90,14 +90,7 @@ export async function resizeImageToMaxSizeBase64(file: File, maxSizeInKB: number
 }
 
 export function generatePlaylistDetailsUrl(id: string, provider: MusicProvider) {
-  switch (provider) {
-    case 'Spotify':
-      return `/playlists/spotify/${id}`
-    case 'YouTube':
-      return `/playlists/youtube/${id}`
-    case 'Apple Music':
-      return `/playlists/apple-music/${id}`
-  }
+  return `/app/playlists/${provider.toLocaleLowerCase()}/${id}`
 }
 
 export function generatePlaylistExternalOpen(id: string, provider: MusicProvider) {

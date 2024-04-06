@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   flexRender,
   getCoreRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -42,7 +43,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const PROVIDERS_FILTER = connectedProviders.map((provider) => ({
     label: provider,
-    value: provider.toLowerCase(),
+    value: provider,
   }))
 
   const table = useReactTable({
@@ -54,6 +55,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
       sorting,
       columnFilters,

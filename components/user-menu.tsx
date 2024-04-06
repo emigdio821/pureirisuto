@@ -66,7 +66,7 @@ export function UserMenu({ session }: { session: Session }) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/profile">Profile</Link>
+            <Link href="/app/profile">Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {

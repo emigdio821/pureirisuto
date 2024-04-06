@@ -1,5 +1,10 @@
 import type { Table } from '@tanstack/react-table'
-import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import {
+  ChevronFirstIcon,
+  ChevronLastIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -50,6 +55,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
         <Button
           size="icon"
           variant="outline"
+          className="rounded-md"
           onClick={() => {
             table.setPageIndex(0)
           }}
@@ -61,6 +67,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
         <Button
           size="icon"
           variant="outline"
+          className="rounded-md"
           onClick={() => {
             table.previousPage()
           }}
@@ -72,6 +79,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
         <Button
           size="icon"
           variant="outline"
+          className="rounded-md"
           onClick={() => {
             table.nextPage()
           }}
@@ -83,6 +91,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
         <Button
           size="icon"
           variant="outline"
+          className="rounded-md"
           onClick={() => {
             table.setPageIndex(table.getPageCount() - 1)
           }}

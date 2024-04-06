@@ -65,7 +65,7 @@ export const columns: Array<ColumnDef<PlaylistItem>> = [
     accessorKey: 'provider',
     filterFn: (row, id, value: string) => {
       const rowValue: string = row.getValue(id)
-      return value.includes(rowValue.toLocaleLowerCase())
+      return value.includes(rowValue)
     },
     cell: ({ row }) => {
       const provider = row.original.provider

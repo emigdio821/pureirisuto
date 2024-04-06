@@ -36,7 +36,7 @@ export default function SpotifyPlaylistDetails({ params }: PlaylistDetailsParams
   return (
     <>
       <Button variant="link" className="self-start" asChild>
-        <Link href="/playlists">
+        <Link href="/app/playlists">
           <ChevronLeftIcon className="h-4 w-4" />
           Playlists
         </Link>
