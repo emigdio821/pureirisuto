@@ -3,12 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { decode } from 'html-entities'
+import { ArrowRightIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import type { z } from 'zod'
 
 import { editPlaylistSchema } from '@/lib/schemas/form'
-import { resizeImageToMaxSizeBase64 } from '@/lib/utils'
+import { cn, resizeImageToMaxSizeBase64 } from '@/lib/utils'
 import type { PlaylistItem } from '@/hooks/use-playlists'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -59,8 +60,7 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
       loading: 'Processing image...',
       success: (data) => {
         if (data) {
-          const base64String = data.replace(/^data:image\/(png|jpeg);base64,/, '')
-          form.setValue('cover', base64String, {
+          form.setValue('cover', data, {
             shouldDirty: true,
             shouldValidate: true,
           })
@@ -97,47 +97,90 @@ export function EditPlaylistDetails(props: EditPLaylistDetailsProps) {
 
   return (
     <Form {...form}>
-      <div className="relative h-28 w-28">
-        <Avatar
-          className="h-28 w-28 rounded-md"
-          onClick={() => {
-            fileInputRef.current?.click()
-          }}
-        >
-          <AvatarImage alt="Playlist image" src={playlist.coverUrl} />
-          <AvatarFallback className="rounded-md" />
-        </Avatar>
+      <div>
+        <div className="flex items-center gap-2">
+          <div className="h-28 w-28">
+            <Avatar
+              className={cn('h-28 w-28 rounded-md', {
+                'opacity-50': form.getValues('cover'),
+              })}
+              onClick={() => {
+                fileInputRef.current?.click()
+              }}
+            >
+              <AvatarImage alt="Playlist image" src={playlist.coverUrl} />
+              <AvatarFallback className="rounded-md" />
+            </Avatar>
+          </div>
+          {form.getValues('cover') && (
+            <>
+              <ArrowRightIcon className="size-4" />
+              <div className="h-28 w-28">
+                <Avatar className="h-28 w-28 rounded-md">
+                  <AvatarImage alt="Playlist image" src={form.getValues('cover')} />
+                  <AvatarFallback className="rounded-md" />
+                </Avatar>
+              </div>
+            </>
+          )}
+        </div>
+
+        {playlist.provider === 'YouTube' && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Cover update is not currently supported on {playlist.provider}
+          </p>
+        )}
       </div>
+
       <form
         onSubmit={(e) => {
           void form.handleSubmit(onSubmit)(e)
         }}
         className="flex flex-col gap-2"
       >
-        <FormField
-          control={form.control}
-          name="cover"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cover</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={(e) => {
-                    const file = e.target.files
-                    if (file && file.length > 0) {
-                      const img = file[0]
-                      void handleCoverImg(img)
-                    }
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div className="flex items-end gap-2">
+          {playlist.provider !== 'YouTube' && (
+            <FormField
+              control={form.control}
+              name="cover"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cover</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={(e) => {
+                        const file = e.target.files
+                        if (file && file.length > 0) {
+                          const img = file[0]
+                          void handleCoverImg(img)
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
-        />
+          {form.getValues('cover') && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = ''
+                }
+                form.resetField('cover')
+              }}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+
         <FormField
           control={form.control}
           name="title"

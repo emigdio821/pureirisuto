@@ -50,9 +50,10 @@ export async function POST(req: NextRequest) {
     })
 
     if (body.cover) {
+      const url = body.cover.replace(/^data:image\/(png|jpeg);base64,/, '')
       await sdk.playlists.addCustomPlaylistCoverImageFromBase64String(
         body.playlistId,
-        body.cover,
+        url,
       )
     }
 
